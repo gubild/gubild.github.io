@@ -431,8 +431,44 @@
     </script>
 </body>
 </html>
-<a href="add-build.html" style="display: block; text-align: center; margin: 40px;">
-    <button style="padding: 15px 30px; background: #2563eb; color: white; border: none; border-radius: 10px; font-size: 1.1rem;">
-        ➕ Добавить свой билд
-    </button>
-</a>
+
+<script>
+// В конец файла index.html (перед закрывающим </body>)
+document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем билды из localStorage
+    const builds = JSON.parse(localStorage.getItem('gubild-builds')) || [];
+    
+    // Показываем количество билдов на главной
+    updateBuildsCount(builds);
+    
+    // Добавляем кнопку "Добавить билд" в навигацию
+    addBuildButton();
+});
+
+// Обновляем счетчики билдов
+function updateBuildsCount(builds) {
+    const categories = ['pvp', 'zvz', 'pve', 'ss'];
+    
+    categories.forEach(category => {
+        const count = builds.filter(b => b.category === category).length;
+        const counterElement = document.querySelector(`.${category}-counter`);
+        
+        if (counterElement) {
+            counterElement.textContent = `${count} билдов`;
+        }
+    });
+}
+// Добавляем кнопку "Добавить билд"
+function addBuildButton() {
+    const nav = document.querySelector('.nav-menu');
+    if (nav) {
+        const buildLink = document.createElement('li');
+        buildLink.innerHTML = `
+            <a href="add-build.html" class="nav-link" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                <i class="fas fa-plus"></i> Добавить билд
+            </a>
+        `;
+        nav.appendChild(buildLink);
+    }
+}
+</script>
