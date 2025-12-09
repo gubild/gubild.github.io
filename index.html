@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gubild | Albion Builds</title>
+    <title>GUBILD | Albion Builds</title>
     <style>
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --accent-red: #dc2626;
+            --accent-purple: #7c3aed;
+            --accent-green: #059669;
+            --accent-orange: #ea580c;
+            --white: #ffffff;
+            --gray-light: #f8fafc;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,392 +25,409 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             min-height: 100vh;
+            color: #1e293b;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
-            text-align: center;
             padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Анимированные частицы на фоне */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 15s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-1000px) rotate(720deg); }
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
-            z-index: 2;
-            position: relative;
+            text-align: center;
+        }
+
+        /* Заголовок */
+        .header {
+            margin-bottom: 60px;
         }
 
         .logo {
             font-size: 4.5rem;
             font-weight: 900;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffffff 0%, #dbeafe 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo span {
-            color: #60a5fa;
-            -webkit-text-fill-color: #60a5fa;
-        }
-
-        .status-box {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 50px 40px;
-            margin: 30px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .status-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #60a5fa, #93c5fd, #dbeafe);
-        }
-
-        .status-text {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, #dbeafe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: #dbeafe;
-            margin-bottom: 30px;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
             line-height: 1.6;
-            font-weight: 300;
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
+        /* Основной контент - категории */
+        .main-content {
             margin: 40px 0;
         }
 
-        .feature {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 25px 15px;
-            transition: all 0.3s ease;
-        }
-
-        .feature:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 2.2rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .feature-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #ffffff;
-        }
-
-        .feature-desc {
-            font-size: 0.9rem;
-            color: #93c5fd;
-            line-height: 1.4;
-        }
-
-        .progress-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 30px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            color: #dbeafe;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #60a5fa, #93c5fd);
-            width: 40%;
-            border-radius: 4px;
-            position: relative;
-            animation: progressAnim 2s ease-in-out;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.4), 
-                transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes progressAnim {
-            from { width: 0%; }
-            to { width: 40%; }
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .contact {
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
             margin-top: 40px;
         }
 
-        .discord-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
-            color: white;
-            text-decoration: none;
-            padding: 16px 32px;
-            border-radius: 16px;
-            font-weight: 600;
-            font-size: 1.1rem;
+        /* Карточка категории */
+        .category-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.3);
-        }
-
-        .discord-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(88, 101, 242, 0.4);
-            background: linear-gradient(135deg, #4752c4 0%, #3c45a5 100%);
-        }
-
-        .discord-icon {
-            font-size: 1.3rem;
-        }
-
-        .footer {
-            margin-top: 50px;
-            color: #93c5fd;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .footer a {
-            color: #dbeafe;
             text-decoration: none;
+            color: inherit;
+            border: 3px solid transparent;
+            position: relative;
+            height: 100%;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .footer a:hover {
-            text-decoration: underline;
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        /* Анимация для текста */
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 20px rgba(219, 234, 254, 0.5); }
-            50% { text-shadow: 0 0 30px rgba(219, 234, 254, 0.8), 0 0 40px rgba(219, 234, 254, 0.4); }
+        .category-top {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
         }
 
-        .glowing-text {
-            animation: glow 3s ease-in-out infinite;
+        .category-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .category-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .category-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .category-bottom {
+            padding: 25px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Цвета категорий */
+        .pvp-card .category-top {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        }
+        .pvp-card .category-icon {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+        .pvp-card .category-title {
+            color: #991b1b;
+        }
+        .pvp-card .category-subtitle {
+            color: #b91c1c;
+        }
+        .pvp-card .category-bottom {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+        .pvp-card:hover {
+            border-color: #dc2626;
+        }
+
+        .zvz-card .category-top {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        }
+        .zvz-card .category-icon {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+        }
+        .zvz-card .category-title {
+            color: #5b21b6;
+        }
+        .zvz-card .category-subtitle {
+            color: #6d28d9;
+        }
+        .zvz-card .category-bottom {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+        }
+        .zvz-card:hover {
+            border-color: #7c3aed;
+        }
+
+        .pve-card .category-top {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+        .pve-card .category-icon {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .pve-card .category-title {
+            color: #047857;
+        }
+        .pve-card .category-subtitle {
+            color: #059669;
+        }
+        .pve-card .category-bottom {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .pve-card:hover {
+            border-color: #059669;
+        }
+
+        .smallscale-card .category-top {
+            background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+        }
+        .smallscale-card .category-icon {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        }
+        .smallscale-card .category-title {
+            color: #c2410c;
+        }
+        .smallscale-card .category-subtitle {
+            color: #ea580c;
+        }
+        .smallscale-card .category-bottom {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        }
+        .smallscale-card:hover {
+            border-color: #ea580c;
+        }
+
+        /* Футер */
+        .footer {
+            margin-top: 80px;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.95rem;
+            border-top: 1px solid #e2e8f0;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .footer p {
+            margin: 5px 0;
         }
 
         /* Адаптивность */
+        @media (max-width: 1024px) {
+            .categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .logo {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
             
-            .status-text {
-                font-size: 2.2rem;
-            }
-            
-            .features {
+            .categories {
                 grid-template-columns: 1fr;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
             }
             
-            .status-box {
-                padding: 30px 20px;
-                margin: 20px 0;
+            .category-card {
+                min-height: 280px;
+            }
+            
+            .category-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.8rem;
+            }
+            
+            .category-title {
+                font-size: 1.9rem;
             }
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
             .logo {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
             
-            .status-text {
-                font-size: 1.8rem;
-            }
-            
-            .discord-link {
-                padding: 14px 24px;
+            .subtitle {
                 font-size: 1rem;
             }
+            
+            .category-card {
+                min-height: 250px;
+            }
+            
+            .category-top {
+                padding: 30px 20px;
+            }
+            
+            .category-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+            
+            .category-title {
+                font-size: 1.7rem;
+            }
+            
+            .category-bottom {
+                padding: 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Анимация при загрузке */
+        .category-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .category-card:nth-child(1) { animation-delay: 0.1s; }
+        .category-card:nth-child(2) { animation-delay: 0.2s; }
+        .category-card:nth-child(3) { animation-delay: 0.3s; }
+        .category-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Эффект при наведении на иконку */
+        .category-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover .category-icon {
+            transform: scale(1.1) rotate(5deg);
         }
     </style>
 </head>
 <body>
-    <!-- Анимированные частицы -->
-    <div class="particles" id="particles"></div>
-
     <div class="container">
-        <h1 class="logo">GUB<span>ILD</span></h1>
-        
-        <div class="status-box">
-            <div class="status-text glowing-text">🚧 САЙТ В РАЗРАБОТКЕ</div>
-            <p class="subtitle">
-                Мы создаем лучший ресурс по билдам Albion Online для русскоязычного сообщества. 
-                Скоро здесь появятся гайды, сборки, калькуляторы и инструменты для гильдий.
-            </p>
+        <!-- Заголовок -->
+        <div class="header">
+            <h1 class="logo">GUBILD</h1>
+            <p class="subtitle">Каталог сборок Albion Online</p>
         </div>
 
-        <div class="features">
-            <div class="feature">
-                <span class="feature-icon">🛡️</span>
-                <div class="feature-title">Билды и Сборки</div>
-                <div class="feature-desc">Оптимальные сборки для PvP, ZvZ, PvE и краула</div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">📊</span>
-                <div class="feature-title">Мета-Аналитика</div>
-                <div class="feature-desc">Актуальная статистика и тренды Albion</div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">⚔️</span>
-                <div class="feature-title">Гайды</div>
-                <div class="feature-desc">Подробные руководства для всех видов контента</div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">🤝</span>
-                <div class="feature-title">Сообщество</div>
-                <div class="feature-desc">Обсуждения, советы и помощь игроков</div>
+        <!-- Основной контент -->
+        <div class="main-content">
+            <div class="categories">
+                <!-- PvP -->
+                <a href="pvp.html" class="category-card pvp-card">
+                    <div class="category-top">
+                        <div class="category-icon">⚔️</div>
+                        <h2 class="category-title">PvP</h2>
+                        <p class="category-subtitle">Открытый мир • 1v1 • 2v2 • 5v5</p>
+                    </div>
+                    <div class="category-bottom">
+                        Перейти к сборкам PvP
+                    </div>
+                </a>
+
+                <!-- ZvZ -->
+                <a href="zvz.html" class="category-card zvz-card">
+                    <div class="category-top">
+                        <div class="category-icon">👥</div>
+                        <h2 class="category-title">ZvZ</h2>
+                        <p class="category-subtitle">Массовые битвы • Захваты • Оборона</p>
+                    </div>
+                    <div class="category-bottom">
+                        Перейти к сборкам ZvZ
+                    </div>
+                </a>
+
+                <!-- PvE -->
+                <a href="pve.html" class="category-card pve-card">
+                    <div class="category-top">
+                        <div class="category-icon">🏰</div>
+                        <h2 class="category-title">PvE</h2>
+                        <p class="category-subtitle">Подземелья • Мир-боссы • Фарм</p>
+                    </div>
+                    <div class="category-bottom">
+                        Перейти к сборкам PvE
+                    </div>
+                </a>
+
+                <!-- Смолскейл -->
+                <a href="smallscale.html" class="category-card smallscale-card">
+                    <div class="category-top">
+                        <div class="category-icon">🔥</div>
+                        <h2 class="category-title">СМОЛСКЕЙЛ</h2>
+                        <p class="category-subtitle">Групповые стычки • Ганки • Роумы</p>
+                    </div>
+                    <div class="category-bottom">
+                        Перейти к сборкам смолскейла
+                    </div>
+                </a>
             </div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-info">
-                <span>Разработка</span>
-                <span>40%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-        </div>
-
-        <div class="contact">
-            <a href="#" class="discord-link">
-                <span class="discord-icon">🎮</span>
-                Присоединяйтесь к нашему Discord
-            </a>
-        </div>
-
+        <!-- Футер -->
         <div class="footer">
-            <p>© 2024 Gubild — Albion Online Builds. Все права защищены.</p>
-            <p>Это неофициальный фанатский сайт. Albion Online © Sandbox Interactive GmbH.</p>
+            <p>GUBILD — каталог сборок Albion Online</p>
+            <p>Это неофициальный фанатский сайт</p>
+            <p>Albion Online © Sandbox Interactive GmbH</p>
         </div>
     </div>
 
     <script>
-        // Создание анимированных частиц
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
+        // Простая анимация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем класс для плавного появления
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Случайные параметры
-                const size = Math.random() * 10 + 5;
-                const posX = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 15;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.opacity = Math.random() * 0.3 + 0.1;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // Запуск при загрузке
-        document.addEventListener('DOMContentLoaded', createParticles);
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            // Эффект при клике на карточку
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Если страница не создана - предотвращаем переход
+                    if (!this.getAttribute('href').endsWith('.html')) {
+                        e.preventDefault();
+                        const category = this.querySelector('.category-title').textContent;
+                        alert(`Страница "${category}" в разработке`);
+                    }
+                });
+            });
+        });
     </script>
 </body>
-    </html>
+</html>
