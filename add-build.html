@@ -1,0 +1,1232 @@
+🎮 Улучшенная система добавления билдов с категориями и деталями
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить билд | GUBILD</title>
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --white: #ffffff;
+            --gray-light: #f8fafc;
+            --overlay-bg: rgba(0, 0, 0, 0.85);
+            --pvp-red: #dc2626;
+            --zvz-purple: #7c3aed;
+            --pve-green: #059669;
+            --ss-orange: #ea580c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        /* Навигация */
+        .nav {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .nav a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--white);
+            color: var(--primary-blue);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 0 10px;
+            border: 2px solid var(--light-blue);
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            background: var(--light-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Основная форма */
+        .form-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            border: 2px solid var(--light-blue);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Выбор категории */
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .category-option {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .category-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-option.selected {
+            border-width: 3px;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-option.pvp {
+            border-color: var(--pvp-red);
+            background: linear-gradient(135deg, #fff5f5, #fee2e2);
+        }
+
+        .category-option.zvz {
+            border-color: var(--zvz-purple);
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+        }
+
+        .category-option.pve {
+            border-color: var(--pve-green);
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        }
+
+        .category-option.ss {
+            border-color: var(--ss-orange);
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .category-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        /* Основная форма */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Секции навыков */
+        .skills-section {
+            background: var(--gray-light);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .skill-input {
+            background: var(--white);
+        }
+
+        /* Загрузка картинки */
+        .image-upload-area {
+            border: 3px dashed #9ca3af;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--gray-light);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--secondary-blue);
+            background: var(--light-blue);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #6b7280;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        #image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #preview-img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            border: 2px solid #d1d5db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #preview-img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Кнопки */
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Галерея билдов */
+        .gallery {
+            margin-top: 50px;
+        }
+
+        .gallery-title {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .builds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .build-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .build-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .build-card.pvp { border-color: var(--pvp-red); }
+        .build-card.zvz { border-color: var(--zvz-purple); }
+        .build-card.pve { border-color: var(--pve-green); }
+        .build-card.ss { border-color: var(--ss-orange); }
+
+        .build-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--light-blue);
+        }
+
+        .build-info {
+            padding: 20px;
+        }
+
+        .build-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .build-category.pvp { background: #fee2e2; color: #991b1b; }
+        .build-category.zvz { background: #f3e8ff; color: #5b21b6; }
+        .build-category.pve { background: #d1fae5; color: #047857; }
+        .build-category.ss { background: #ffedd5; color: #c2410c; }
+
+        .build-code {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .build-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .build-meta {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .build-author {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        /* Оверлей с деталями */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-bg);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .build-details {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .details-title {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+            padding-right: 40px;
+        }
+
+        .details-category {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .details-category.pvp { background: #fee2e2; color: #991b1b; }
+        .details-category.zvz { background: #f3e8ff; color: #5b21b6; }
+        .details-category.pve { background: #d1fae5; color: #047857; }
+        .details-category.ss { background: #ffedd5; color: #c2410c; }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .details-section {
+            background: var(--gray-light);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .details-section h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-item:last-child {
+            border-bottom: none;
+        }
+
+        .skill-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 2px;
+        }
+
+        .build-image-large {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 25px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .builds-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav a {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .build-details {
+                padding: 25px;
+            }
+            
+            .details-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация -->
+        <div class="nav">
+            <a href="index.html">← На главную</a>
+            <a href="#gallery">Просмотреть билды</a>
+        </div>
+
+        <!-- Заголовок -->
+        <div class="header">
+            <h1 class="logo">Добавить билд</h1>
+        </div>
+
+        <!-- Форма добавления -->
+        <div class="form-container">
+            <h2 class="form-title">🎮 Создать новый билд</h2>
+            
+            <form id="build-form">
+                <!-- Выбор категории -->
+                <div class="form-group">
+                    <label>Выберите категорию:</label>
+                    <div class="category-selector">
+                        <div class="category-option pvp" data-category="pvp">
+                            <span class="category-icon">⚔️</span>
+                            <div class="category-name">PvP</div>
+                            <small>Открытый мир, 1v1, 2v2, 5v5</small>
+                        </div>
+                        <div class="category-option zvz" data-category="zvz">
+                            <span class="category-icon">👥</span>
+                            <div class="category-name">ZvZ</div>
+                            <small>Массовые битвы, захваты</small>
+                        </div>
+                        <div class="category-option pve" data-category="pve">
+                            <span class="category-icon">🏰</span>
+                            <div class="category-name">PvE</div>
+                            <small>Подземелья, мир-боссы, фарм</small>
+                        </div>
+                        <div class="category-option ss" data-category="ss">
+                            <span class="category-icon">🔥</span>
+                            <div class="category-name">Смолскейл</div>
+                            <small>Групповые стычки, ганки</small>
+                        </div>
+                    </div>
+                    <input type="hidden" id="category" required>
+                </div>
+
+                <!-- Название и код -->
+                <div class="form-group">
+                    <label for="name">Название билда:</label>
+                    <input type="text" id="name" placeholder="Например: ZvZ Хилер (Божественный посох)" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="code">Код билда:</label>
+                    <input type="text" id="code" placeholder="Например: 987tuy" required>
+                </div>
+
+                <!-- Основное оружие -->
+                <div class="skills-section">
+                    <h3 class="section-title">🗡️ Основное оружие</h3>
+                    <div class="skills-grid">
+                        <div>
+                            <label for="main-weapon">Тип оружия:</label>
+                            <input type="text" id="main-weapon" class="skill-input" placeholder="Боевой посох" required>
+                        </div>
+                        <div>
+                            <label for="weapon-tier">Тир оружия:</label>
+                            <select id="weapon-tier" class="skill-input" required>
+                                <option value="">Выберите тир</option>
+                                <option value="4.0">4.0</option>
+                                <option value="4.1">4.1</option>
+                                <option value="5.0">5.0</option>
+                                <option value="5.1">5.1</option>
+                                <option value="6.0">6.0</option>
+                                <option value="6.1">6.1</option>
+                                <option value="7.0">7.0</option>
+                                <option value="7.1">7.1</option>
+                                <option value="8.0">8.0</option>
+                                <option value="8.1">8.1</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Навыки оружия -->
+                <div class="skills-section">
+                    <h3 class="section-title">✨ Навыки оружия</h3>
+                    <div class="skills-grid">
+                        <div>
+                            <label for="skill-q">Q навык:</label>
+                            <input type="text" id="skill-q" class="skill-input" placeholder="Удар молота" required>
+                        </div>
+                        <div>
+                            <label for="skill-w">W навык:</label>
+                            <input type="text" id="skill-w" class="skill-input" placeholder="Разящий удар" required>
+                        </div>
+                        <div>
+                            <label for="skill-e">E навык:</label>
+                            <input type="text" id="skill-e" class="skill-input" placeholder="Сокрушительный удар" required>
+                        </div>
+                        <div>
+                            <label for="skill-r">R навык (если есть):</label>
+                            <input type="text" id="skill-r" class="skill-input" placeholder="Удар грома">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Пассивки оружия -->
+                <div class="skills-section">
+                    <h3 class="section-title">🛡️ Пассивки оружия</h3>
+                    <div class="skills-grid">
+                        <div>
+                            <label for="passive1">Пассивка 1:</label>
+                            <input type="text" id="passive1" class="skill-input" placeholder="Усиление удара" required>
+                        </div>
+                        <div>
+                            <label for="passive2">Пассивка 2:</label>
+                            <input type="text" id="passive2" class="skill-input" placeholder="Бронебой">
+                        </div>
+                        <div>
+                            <label for="passive3">Пассивка 3:</label>
+                            <input type="text" id="passive3" class="skill-input" placeholder="Жизнеукратие">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Броня -->
+                <div class="skills-section">
+                    <h3 class="section-title">🧥 Броня и навыки</h3>
+                    <div class="skills-grid">
+                        <div>
+                            <label for="armor-head">Шлем:</label>
+                            <input type="text" id="armor-head" class="skill-input" placeholder="Рыцарский шлем" required>
+                        </div>
+                        <div>
+                            <label for="skill-head">Навык шлема:</label>
+                            <input type="text" id="skill-head" class="skill-input" placeholder="Боевой клич" required>
+                        </div>
+                        <div>
+                            <label for="passive-head">Пассивка шлема:</label>
+                            <input type="text" id="passive-head" class="skill-input" placeholder="Устойчивость" required>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-grid" style="margin-top: 15px;">
+                        <div>
+                            <label for="armor-body">Броня:</label>
+                            <input type="text" id="armor-body" class="skill-input" placeholder="Рыцарская броня" required>
+                        </div>
+                        <div>
+                            <label for="skill-body">Навык брони:</label>
+                            <input type="text" id="skill-body" class="skill-input" placeholder="Железная кожа" required>
+                        </div>
+                        <div>
+                            <label for="passive-body">Пассивка брони:</label>
+                            <input type="text" id="passive-body" class="skill-input" placeholder="Отражение урона" required>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-grid" style="margin-top: 15px;">
+                        <div>
+                            <label for="armor-shoes">Обувь:</label>
+                            <input type="text" id="armor-shoes" class="skill-input" placeholder="Рыцарские сапоги" required>
+                        </div>
+                        <div>
+                            <label for="skill-shoes">Навык обуви:</label>
+                            <input type="text" id="skill-shoes" class="skill-input" placeholder="Рывок" required>
+                        </div>
+                        <div>
+                            <label for="passive-shoes">Пассивка обуви:</label>
+                            <input type="text" id="passive-shoes" class="skill-input" placeholder="Быстрые ноги" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Плащ и еда -->
+                <div class="skills-section">
+                    <h3 class="section-title">🎒 Плащ и расходники</h3>
+                    <div class="skills-grid">
+                        <div>
+                            <label for="cape">Плащ:</label>
+                            <input type="text" id="cape" class="skill-input" placeholder="Плащ клерка">
+                        </div>
+                        <div>
+                            <label for="skill-cape">Навык плаща:</label>
+                            <input type="text" id="skill-cape" class="skill-input" placeholder="Невидимость">
+                        </div>
+                        <div>
+                            <label for="passive-cape">Пассивка плаща:</label>
+                            <input type="text" id="passive-cape" class="skill-input" placeholder="Ускорение">
+                        </div>
+                    </div>
+                    
+                    <div class="skills-grid" style="margin-top: 15px;">
+                        <div>
+                            <label for="food">Еда:</label>
+                            <input type="text" id="food" class="skill-input" placeholder="Тушеная капуста">
+                        </div>
+                        <div>
+                            <label for="potion">Зелье:</label>
+                            <input type="text" id="potion" class="skill-input" placeholder="Зелье отравления">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Перксвапы -->
+                <div class="skills-section">
+                    <h3 class="section-title">🔄 Перксвапы</h3>
+                    <div class="form-group">
+                        <label for="perkswaps">Альтернативные варианты:</label>
+                        <textarea id="perkswaps" placeholder="Пример: Вместо X можно взять Y для большего урона/выживаемости..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Загрузка картинки -->
+                <div class="form-group">
+                    <label>Загрузите скриншот:</label>
+                    <div class="image-upload-area" id="upload-area">
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Нажмите, чтобы выбрать файл</div>
+                        <div class="upload-hint">PNG, JPG (макс. 5MB)</div>
+                    </div>
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                    <div id="image-preview"></div>
+                </div>
+
+                <!-- Описание -->
+                <div class="form-group">
+                    <label for="description">Описание и тактика:</label>
+                    <textarea id="description" placeholder="Опишите как играть на этом билде, ротацию скиллов, тактику..." rows="4" required></textarea>
+                </div>
+
+                <!-- Автор -->
+                <div class="form-group">
+                    <label for="author">Ваше имя (необязательно):</label>
+                    <input type="text" id="author" placeholder="Игровой никнейм">
+                </div>
+
+                <!-- Кнопки -->
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾</span> Сохранить билд
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                        <span>🗑️</span> Очистить форму
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Галерея билдов -->
+        <div class="gallery" id="gallery">
+            <h2 class="gallery-title">🎮 Добавленные билды</h2>
+            <div class="builds-grid" id="builds-container">
+                <!-- Билды будут добавляться сюда -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Оверлей с деталями -->
+    <div class="overlay" id="build-overlay">
+        <div class="build-details" id="build-details">
+            <!-- Детали билда будут загружены сюда -->
+        </div>
+    </div>
+
+    <script>
+        // Хранилище для билдов
+        let builds = JSON.parse(localStorage.getItem('gubild-builds')) || [];
+
+        // Элементы DOM
+        const categoryOptions = document.querySelectorAll('.category-option');
+        const categoryInput = document.getElementById('category');
+        const buildForm = document.getElementById('build-form');
+        const uploadArea = document.getElementById('upload-area');
+        const imageInput = document.getElementById('image-input');
+        const buildsContainer = document.getElementById('builds-container');
+        const overlay = document.getElementById('build-overlay');
+        const buildDetails = document.getElementById('build-details');
+
+        // Выбор категории
+        categoryOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                categoryOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                categoryInput.value = option.dataset.category;
+            });
+        });
+
+        // Загрузка картинки
+        uploadArea.addEventListener('click', () => imageInput.click());
+        
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Файл слишком большой! Максимум 5MB.');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" id="preview-img" alt="Предпросмотр" 
+                             onclick="showImageOverlay('${e.target.result}')">
+                        <p><small>Нажмите на картинку для увеличения</small></p>
+                    `;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Добавление нового билда
+        buildForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!categoryInput.value) {
+                alert('Выберите категорию!');
+                return;
+            }
+            
+            const previewImg = document.querySelector('#preview-img');
+            const image = previewImg ? previewImg.src : 'https://via.placeholder.com/400x300/3b82f6/ffffff?text=GUBILD';
+            
+            const build = {
+                id: Date.now(),
+                category: categoryInput.value,
+                name: document.getElementById('name').value,
+                code: document.getElementById('code').value,
+                mainWeapon: document.getElementById('main-weapon').value,
+                weaponTier: document.getElementById('weapon-tier').value,
+                skills: {
+                    q: document.getElementById('skill-q').value,
+                    w: document.getElementById('skill-w').value,
+                    e: document.getElementById('skill-e').value,
+                    r: document.getElementById('skill-r').value
+                },
+                passives: {
+                    passive1: document.getElementById('passive1').value,
+                    passive2: document.getElementById('passive2').value,
+                    passive3: document.getElementById('passive3').value
+                },
+                armor: {
+                    head: document.getElementById('armor-head').value,
+                    headSkill: document.getElementById('skill-head').value,
+                    headPassive: document.getElementById('passive-head').value,
+                    body: document.getElementById('armor-body').value,
+                    bodySkill: document.getElementById('skill-body').value,
+                    bodyPassive: document.getElementById('passive-body').value,
+                    shoes: document.getElementById('armor-shoes').value,
+                    shoesSkill: document.getElementById('skill-shoes').value,
+                    shoesPassive: document.getElementById('passive-shoes').value
+                },
+                cape: {
+                    name: document.getElementById('cape').value,
+                    skill: document.getElementById('skill-cape').value,
+                    passive: document.getElementById('passive-cape').value
+                },
+                consumables: {
+                    food: document.getElementById('food').value,
+                    potion: document.getElementById('potion').value
+                },
+                perkswaps: document.getElementById('perkswaps').value,
+                description: document.getElementById('description').value,
+                author: document.getElementById('author').value || 'Аноним',
+                image: image,
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            
+            builds.push(build);
+            localStorage.setItem('gubild-builds', JSON.stringify(builds));
+            
+            // Добавляем в галерею
+            addBuildToGallery(build);
+            
+            // Очищаем форму
+            clearForm();
+            
+            alert('Билд успешно добавлен!');
+            
+            // Прокрутка к галерее
+            document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Добавление билда в галерею
+        function addBuildToGallery(build) {
+            const buildCard = document.createElement('div');
+            buildCard.className = `build-card ${build.category}`;
+            buildCard.dataset.id = build.id;
+            
+            const categoryNames = {
+                'pvp': 'PvP',
+                'zvz': 'ZvZ', 
+                'pve': 'PvE',
+                'ss': 'Смолскейл'
+            };
+            
+            buildCard.innerHTML = `
+                <img src="${build.image}" alt="${build.name}" class="build-image" 
+                     onclick="showBuildDetails(${build.id})">
+                <div class="build-info" onclick="showBuildDetails(${build.id})">
+                    <span class="build-category ${build.category}">${categoryNames[build.category]}</span>
+                    <div class="build-code">Код: ${build.code}</div>
+                    <h3 class="build-name">${build.name}</h3>
+                    <div class="build-meta">
+                        <span>🗡️ ${build.mainWeapon} ${build.weaponTier}</span>
+                        <span>🧥 ${build.armor.head}</span>
+                    </div>
+                    <div class="build-author">
+                        Автор: ${build.author} • ${build.date}
+                    </div>
+                </div>
+            `;
+            
+            buildsContainer.prepend(buildCard);
+        }
+
+        // Показать детали билда
+        function showBuildDetails(id) {
+            const build = builds.find(b => b.id === id);
+            if (!build) return;
+            
+            const categoryNames = {
+                'pvp': 'PvP',
+                'zvz': 'ZvZ', 
+                'pve': 'PvE',
+                'ss': 'Смолскейл'
+            };
+            
+            buildDetails.innerHTML = `
+                <button class="close-btn" onclick="closeOverlay()">×</button>
+                <h2 class="details-title">${build.name}</h2>
+                <div class="details-category ${build.category}">${categoryNames[build.category]}</div>
+                <div class="build-code" style="margin-bottom: 20px;">Код билда: ${build.code}</div>
+                
+                <img src="${build.image}" alt="${build.name}" class="build-image-large">
+                
+                <div class="details-grid">
+                    <!-- Оружие -->
+                    <div class="details-section">
+                        <h3>🗡️ Оружие</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">
+                                <span class="skill-icon">${build.mainWeapon}</span>
+                                <div>
+                                    <div class="skill-name">${build.mainWeapon} ${build.weaponTier}</div>
+                                </div>
+                            </li>
+                            <li class="skill-item">
+                                <span class="skill-icon">Q</span>
+                                <div>
+                                    <div class="skill-name">${build.skills.q}</div>
+                                </div>
+                            </li>
+                            <li class="skill-item">
+                                <span class="skill-icon">W</span>
+                                <div>
+                                    <div class="skill-name">${build.skills.w}</div>
+                                </div>
+                            </li>
+                            <li class="skill-item">
+                                <span class="skill-icon">E</span>
+                                <div>
+                                    <div class="skill-name">${build.skills.e}</div>
+                                </div>
+                            </li>
+                            ${build.skills.r ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">R</span>
+                                <div>
+                                    <div class="skill-name">${build.skills.r}</div>
+                                </div>
+                            </li>` : ''}
+                        </ul>
+                    </div>
+                    
+                    <!-- Пассивки оружия -->
+                    <div class="details-section">
+                        <h3>✨ Пассивки оружия</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">
+                                <span class="skill-icon">1</span>
+                                <div>
+                                    <div class="skill-name">${build.passives.passive1}</div>
+                                </div>
+                            </li>
+                            ${build.passives.passive2 ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">2</span>
+                                <div>
+                                    <div class="skill-name">${build.passives.passive2}</div>
+                                </div>
+                            </li>` : ''}
+                            ${build.passives.passive3 ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">3</span>
+                                <div>
+                                    <div class="skill-name">${build.passives.passive3}</div>
+                                </div>
+                            </li>` : ''}
+                        </ul>
+                    </div>
+                    
+                    <!-- Броня -->
+                    <div class="details-section">
+                        <h3>🧥 Броня</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">
+                                <span class="skill-icon">⛑️</span>
+                                <div>
+                                    <div class="skill-name">${build.armor.head}</div>
+                                    <div class="skill-desc">${build.armor.headSkill} / ${build.armor.headPassive}</div>
+                                </div>
+                            </li>
+                            <li class="skill-item">
+                                <span class="skill-icon">🧥</span>
+                                <div>
+                                    <div class="skill-name">${build.armor.body}</div>
+                                    <div class="skill-desc">${build.armor.bodySkill} / ${build.armor.bodyPassive}</div>
+                                </div>
+                            </li>
+                            <li class="skill-item">
+                                <span class="skill-icon">👟</span>
+                                <div>
+                                    <div class="skill-name">${build.armor.shoes}</div>
+                                    <div class="skill-desc">${build.armor.shoesSkill} / ${build.armor.shoesPassive}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Расходники -->
+                    <div class="details-section">
+                        <h3>🎒 Расходники</h3>
+                        <ul class="skill-list">
+                            ${build.cape.name ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">🎭</span>
+                                <div>
+                                    <div class="skill-name">${build.cape.name}</div>
+                                    <div class="skill-desc">${build.cape.skill || ''} ${build.cape.passive ? '/' + build.cape.passive : ''}</div>
+                                </div>
+                            </li>` : ''}
+                            ${build.consumables.food ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">🍖</span>
+                                <div>
+                                    <div class="skill-name">Еда: ${build.consumables.food}</div>
+                                </div>
+                            </li>` : ''}
+                            ${build.consumables.potion ? `
+                            <li class="skill-item">
+                                <span class="skill-icon">🧪</span>
+                                <div>
+                                    <div class="skill-name">Зелье: ${build.consumables.potion}</div>
+                                </div>
+                            </li>` : ''}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Перксвапы -->
+                ${build.perkswaps ? `
+                <div class="details-section" style="margin-top: 20px;">
+                    <h3>🔄 Перксвапы</h3>
+                    <p>${build.perkswaps}</p>
+                </div>` : ''}
+                
+                <!-- Описание -->
+                <div class="details-section" style="margin-top: 20px;">
+                    <h3>📝 Описание и тактика</h3>
+                    <p>${build.description}</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; color: #6b7280; font-size: 0.9rem;">
+                    Добавлено: ${build.date} | Автор: ${build.author}
+                </div>
+            `;
+            
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Показать увеличенную картинку
+        function showImageOverlay(src) {
+            buildDetails.innerHTML = `
+                <button class="close-btn" onclick="closeOverlay()">×</button>
+                <img src="${src}" style="width: 100%; max-height: 80vh; object-fit: contain; border-radius: 10px;">
+            `;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Закрыть оверлей
+        function closeOverlay() {
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Очистка формы
+        function clearForm() {
+            buildForm.reset();
+            document.getElementById('image-preview').innerHTML = '';
+            categoryOptions.forEach(opt => opt.classList.remove('selected'));
+            categoryInput.value = '';
+            imageInput.value = '';
+        }
+
+        // Загрузка существующих билдов при старте
+        function loadBuilds() {
+            builds.forEach(build => addBuildToGallery(build));
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', loadBuilds);
+
+        // Закрытие оверлея при клике вне его
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                closeOverlay();
+            }
+        });
+
+        // Сохранение при закрытии вкладки
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('gubild-builds', JSON.stringify(builds));
+        });
+    </script>
+</body>
+</html>
