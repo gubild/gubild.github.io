@@ -41,12 +41,6 @@
             text-shadow: 0 2px 10px rgba(255, 106, 0, 0.3);
         }
 
-        .subtitle {
-            color: #aaa;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -249,24 +243,24 @@
             <h1>Builds</h1>
         </header>
 
-        <!-- 4 категории -->
+        <!-- 4 категории с правильными ссылками -->
         <div class="categories-grid">
-            <a href="PvP.html" class="category-card">
+            <a href="pvp.html" class="category-card">
                 <span class="category-icon">⚔️</span>
                 <h2 class="category-title">ПВП</h2>
             </a>
 
-            <a href="PvE.html" class="category-card">
+            <a href="pve.html" class="category-card">
                 <span class="category-icon">🛡️</span>
                 <h2 class="category-title">ПВЕ</h2>
             </a>
 
-            <a href="ZvZ.html" class="category-card">
+            <a href="Zvz.html" class="category-card">
                 <span class="category-icon">🏰</span>
                 <h2 class="category-title">ЗВЗ</h2>
             </a>
 
-            <a href="SS.html" class="category-card">
+            <a href="smallscale.html" class="category-card">
                 <span class="category-icon">👤</span>
                 <h2 class="category-title">СС</h2>
             </a>
@@ -313,10 +307,10 @@
         // Функция для получения названия категории
         function getCategoryName(category) {
             const categoryNames = {
-                'pvp': { name: 'ПВП', icon: '⚔️', link: 'PvP.html' },
-                'pve': { name: 'ПВЕ', icon: '🛡️', link: 'PvE.html' },
-                'zvz': { name: 'ЗВЗ', icon: '🏰', link: 'ZvZ.html' },
-                'ss': { name: 'СС', icon: '👤', link: 'SS.html' }
+                'pvp': { name: 'ПВП', icon: '⚔️', link: 'pvp.html' },
+                'pve': { name: 'ПВЕ', icon: '🛡️', link: 'pve.html' },
+                'zvz': { name: 'ЗВЗ', icon: '🏰', link: 'Zvz.html' },
+                'ss': { name: 'СС', icon: '👤', link: 'smallscale.html' }
             };
             
             return categoryNames[category] || { name: '???', icon: '❓', link: 'index.html' };
