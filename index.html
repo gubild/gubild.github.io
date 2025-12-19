@@ -3,431 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Builds</title>
+    <title>🏆 Библиотека билдов Albion</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
-
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            color: #f0f0f0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e6e6ff;
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 20px;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
-
-        header {
+        
+        /* ШАПКА */
+        .main-header {
             text-align: center;
+            padding: 40px 20px;
+            background: rgba(76, 0, 130, 0.2);
+            border-radius: 20px;
             margin-bottom: 40px;
-            padding-top: 20px;
+            border: 2px solid #9370db;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
-        h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(45deg, #ff9a00, #ff6a00);
+        
+        .main-header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #9370db, #4b0082);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(255, 106, 0, 0.3);
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(147, 112, 219, 0.5);
         }
-
+        
+        .main-header p {
+            font-size: 1.2rem;
+            color: #d8bfd8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* СТАТИСТИКА */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(106, 90, 205, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid #6a5acd;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(106, 90, 205, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #9370db;
+            text-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+        }
+        
+        .stat-label {
+            color: #d8bfd8;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* КАТЕГОРИИ */
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 50px;
         }
-
+        
         .category-card {
-            background: rgba(30, 30, 46, 0.8);
+            background: rgba(75, 0, 130, 0.3);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
+            border: 2px solid #483d8b;
+            transition: all 0.4s;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            text-decoration: none;
-            display: block;
+            position: relative;
+            overflow: hidden;
         }
-
+        
         .category-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 106, 0, 0.3);
-            box-shadow: 0 10px 20px rgba(255, 106, 0, 0.2);
-            background: rgba(30, 30, 46, 0.9);
+            transform: translateY(-10px) scale(1.02);
+            border-color: #9370db;
+            box-shadow: 0 20px 40px rgba(147, 112, 219, 0.4);
         }
-
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9370db, #4b0082);
+        }
+        
         .category-icon {
             font-size: 3.5rem;
             margin-bottom: 20px;
             display: block;
         }
-
-        .category-title {
-            font-size: 2.5rem;
-            color: #ff9a00;
-            margin-bottom: 10px;
+        
+        .category-card h3 {
+            color: #e6e6ff;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .category-card p {
+            color: #c0c0ff;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .category-btn {
+            background: linear-gradient(45deg, #6a5acd, #483d8b);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
-
-        .latest-build-section {
-            background: rgba(30, 30, 46, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 40px;
-            border-left: 5px solid #ff6a00;
+        
+        .category-btn:hover {
+            background: linear-gradient(45deg, #7b68ee, #5d4acd);
+            transform: scale(1.05);
         }
-
+        
+        /* БИЛДЫ */
+        .builds-section {
+            background: rgba(25, 25, 112, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid #4169e1;
+        }
+        
         .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #e6e6ff;
+            font-size: 2rem;
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 106, 0, 0.2);
         }
-
-        .section-icon {
-            font-size: 2rem;
-            color: #ff6a00;
+        
+        .add-build-btn {
+            background: linear-gradient(45deg, #32cd32, #228b22);
+            color: white;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
         }
-
-        .section-title {
-            font-size: 1.8rem;
-            color: #ff9a00;
+        
+        .add-build-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(50, 205, 50, 0.3);
         }
-
-        .latest-build-card {
-            background: rgba(20, 20, 35, 0.6);
-            border-radius: 10px;
+        
+        /* СЕТКА БИЛДОВ */
+        .builds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .build-card {
+            background: rgba(65, 105, 225, 0.1);
+            border-radius: 15px;
             padding: 25px;
-            border: 1px solid rgba(255, 106, 0, 0.1);
+            border: 1px solid #4169e1;
+            transition: all 0.3s;
+            position: relative;
         }
-
+        
+        .build-card:hover {
+            transform: translateY(-5px);
+            border-color: #9370db;
+            box-shadow: 0 15px 30px rgba(147, 112, 219, 0.2);
+        }
+        
         .build-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
         }
-
+        
         .build-name {
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .build-category-badge {
-            background: rgba(255, 106, 0, 0.2);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 1rem;
+            color: #e6e6ff;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: #ff9a00;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .build-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .detail-item {
-            background: rgba(255, 106, 0, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 106, 0, 0.2);
-        }
-
-        .detail-label {
-            color: #aaa;
-            font-size: 0.9rem;
             margin-bottom: 5px;
+            cursor: pointer;
         }
-
-        .detail-value {
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 500;
+        
+        .build-category {
+            background: rgba(147, 112, 219, 0.2);
+            color: #9370db;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
         }
-
-        .no-builds {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        .no-builds-icon {
-            font-size: 4rem;
+        
+        .build-description {
+            color: #c0c0ff;
             margin-bottom: 20px;
-            display: block;
-            opacity: 0.5;
+            line-height: 1.6;
+            min-height: 60px;
         }
-
-        .add-build-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 14px 35px;
-            background: linear-gradient(45deg, #ff6a00, #ff9a00);
-            color: white;
-            text-decoration: none;
+        
+        .build-items-preview {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #9370db;
+        }
+        
+        .build-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #483d8b;
+        }
+        
+        .build-date {
+            color: #a0a0ff;
+            font-size: 0.9rem;
+        }
+        
+        .build-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-
-        .add-build-btn:hover {
+        
+        .view-btn {
+            background: rgba(65, 105, 225, 0.3);
+            color: #6495ed;
+            border: 1px solid #4169e1;
+        }
+        
+        .delete-btn {
+            background: rgba(220, 20, 60, 0.2);
+            color: #dc143c;
+            border: 1px solid #dc143c;
+        }
+        
+        .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 106, 0, 0.4);
         }
-
+        
+        /* ФУТЕР */
         footer {
             text-align: center;
+            padding: 40px 20px;
             margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #888;
-            font-size: 0.9rem;
+            border-top: 2px solid #483d8b;
+            color: #a0a0ff;
         }
-
-        .build-meta {
-            display: flex;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        
+        /* ПУСТОЕ СОСТОЯНИЕ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(25, 25, 112, 0.1);
+            border-radius: 15px;
+            border: 2px dashed #483d8b;
         }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #aaa;
-            font-size: 0.9rem;
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #483d8b;
+            margin-bottom: 20px;
+            opacity: 0.5;
         }
-
+        
+        /* АДАПТИВНОСТЬ */
         @media (max-width: 768px) {
-            .categories-grid {
+            .main-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .builds-grid {
                 grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .category-title {
-                font-size: 2rem;
+            .categories-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Builds</h1>
+        <!-- ШАПКА -->
+        <header class="main-header">
+            <h1>🏆 Библиотека билдов Albion</h1>
+            <p>Создавайте, сохраняйте и делитесь своими лучшими сетами. Ваша личная коллекция стратегий.</p>
         </header>
-
-        <!-- 4 категории с правильными ссылками -->
-        <div class="categories-grid">
-            <a href="pvp.html" class="category-card">
-                <span class="category-icon">⚔️</span>
-                <h2 class="category-title">ПВП</h2>
-            </a>
-
-            <a href="pve.html" class="category-card">
-                <span class="category-icon">🛡️</span>
-                <h2 class="category-title">ПВЕ</h2>
-            </a>
-
-            <a href="Zvz.html" class="category-card">
-                <span class="category-icon">🏰</span>
-                <h2 class="category-title">ЗВЗ</h2>
-            </a>
-
-            <a href="smallscale.html" class="category-card">
-                <span class="category-icon">👤</span>
-                <h2 class="category-title">СС</h2>
-            </a>
+        
+        <!-- СТАТИСТИКА -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalBuilds">0</div>
+                <div class="stat-label">Всего билдов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pvpBuilds">0</div>
+                <div class="stat-label">⚔️ ПВП билдов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pveBuilds">0</div>
+                <div class="stat-label">🐉 ПВЕ билдов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="zvzBuilds">0</div>
+                <div class="stat-label">⚡ ZvZ билдов</div>
+            </div>
         </div>
-
-        <!-- Блок последнего добавленного билда -->
-        <div class="latest-build-section">
-            <div class="section-header">
-                <span class="section-icon">🆕</span>
-                <h2 class="section-title">Последний добавленный билд</h2>
+        
+        <!-- КАТЕГОРИИ -->
+        <div class="categories-grid">
+            <div class="category-card" onclick="window.location.href='pvp.html'">
+                <div class="category-icon">⚔️</div>
+                <h3>Player vs Player</h3>
+                <p>Дуэли, арены, открытый мир PvP. Сеты для победы в схватках 1 на 1.</p>
+                <a href="pvp.html" class="category-btn">Смотреть билды →</a>
             </div>
             
-            <div id="latestBuildContainer">
-                <!-- Здесь будет загружен последний билд -->
+            <div class="category-card" onclick="window.location.href='pve.html'">
+                <div class="category-icon">🐉</div>
+                <h3>Player vs Environment</h3>
+                <p>Данжи, рейды, фарм мобов. Оптимальные сеты для PvE контента.</p>
+                <a href="pve.html" class="category-btn">Смотреть билды →</a>
+            </div>
+            
+            <div class="category-card" onclick="window.location.href='zvz.html'">
+                <div class="category-icon">⚡</div>
+                <h3>Zerg vs Zerg</h3>
+                <p>Массовые сражения, контроль территорий. Сеты для больших групп.</p>
+                <a href="zvz.html" class="category-btn">Смотреть билды →</a>
+            </div>
+            
+            <div class="category-card" onclick="window.location.href='smallscale.html'">
+                <div class="category-icon">👥</div>
+                <h3>Small Scale</h3>
+                <p>Небольшие группы 2v2, 5v5, 10v10. Тактические сеты для команд.</p>
+                <a href="smallscale.html" class="category-btn">Смотреть билды →</a>
             </div>
         </div>
-
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="add-build.html" class="add-build-btn">➕ Новый билд</a>
-        </div>
-
+        
+        <!-- ВСЕ БИЛДЫ -->
+        <section class="builds-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-box-open"></i> Все мои билды</h2>
+                <a href="add-build.html" class="add-build-btn">
+                    <i class="fas fa-plus-circle"></i> Добавить новый билд
+                </a>
+            </div>
+            
+            <!-- КОНТЕЙНЕР ДЛЯ БИЛДОВ -->
+            <div id="buildsContainer">
+                <div class="empty-state">
+                    <div class="empty-icon">📁</div>
+                    <h3 style="color: #e6e6ff; margin-bottom: 15px;">Пока нет созданных билдов</h3>
+                    <p style="color: #c0c0ff; margin-bottom: 25px;">Начните с добавления первого билда в коллекцию</p>
+                    <a href="add-build.html" class="add-build-btn" style="display: inline-flex;">
+                        <i class="fas fa-plus-circle"></i> Создать первый билд
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ФУТЕР -->
         <footer>
-            <p>© 2024 Builds</p>
+            <p>© 2024 Библиотека билдов Albion Online | Все права защищены</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #9370db;">
+                <i class="fas fa-shield-alt"></i> Защищено паролем: 92421lis932
+            </p>
         </footer>
     </div>
-
+    
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПРОСМОТРА БИЛДА -->
+    <div id="buildModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 20px; padding: 40px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; border: 3px solid #7c3aed; position: relative;">
+            <button onclick="closeBuildModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #a0a0ff; font-size: 1.5rem; cursor: pointer;">✕</button>
+            
+            <div id="modalContent">
+                <!-- Сюда загрузится информация о билде -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ УДАЛЕНИЯ -->
+    <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #450a0a, #7f1d1d); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; border: 3px solid #dc2626;">
+            <h3 style="color: #fca5a5; text-align: center; margin-bottom: 25px; font-size: 1.8rem;">
+                <i class="fas fa-exclamation-triangle"></i> Удаление билда
+            </h3>
+            
+            <p style="color: #fecaca; text-align: center; margin-bottom: 30px;">
+                Для удаления билда введите пароль безопасности:
+            </p>
+            
+            <input type="password" id="deletePassword" placeholder="Введите пароль 92421lis932" 
+                   style="width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 2px solid #dc2626; border-radius: 10px; color: white; font-size: 1rem; margin-bottom: 20px;">
+            
+            <div id="deleteError" style="color: #f87171; text-align: center; margin-bottom: 20px; display: none;">
+                <i class="fas fa-times-circle"></i> Неверный пароль!
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="closeDeleteModal()" 
+                        style="padding: 12px 30px; background: #374151; color: #d1d5db; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">
+                    Отмена
+                </button>
+                <button onclick="confirmDelete()" 
+                        style="padding: 12px 30px; background: linear-gradient(45deg, #dc2626, #991b1b); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">
+                    Удалить билд
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
     <script>
-        // Функция для получения последнего добавленного билда
-        function getLatestBuild() {
-            const builds = JSON.parse(localStorage.getItem('eldenRingBuilds') || '[]');
-            
-            if (builds.length === 0) {
-                return null;
+        // Инициализация главной страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            renderBuilds();
+        });
+        
+        // Обновление статистики
+        function updateStats() {
+            try {
+                const builds = JSON.parse(localStorage.getItem('builds')) || [];
+                const total = builds.length;
+                
+                const pvp = builds.filter(b => b.category === 'pvp').length;
+                const pve = builds.filter(b => b.category === 'pve').length;
+                const zvz = builds.filter(b => b.category === 'zvz').length;
+                const smallscale = builds.filter(b => b.category === 'smallscale').length;
+                
+                document.getElementById('totalBuilds').textContent = total;
+                document.getElementById('pvpBuilds').textContent = pvp;
+                document.getElementById('pveBuilds').textContent = pve;
+                document.getElementById('zvzBuilds').textContent = zvz;
+            } catch (error) {
+                console.error("Ошибка статистики:", error);
             }
-            
-            // Сортируем по дате создания (новые первые)
-            const sortedBuilds = builds.sort((a, b) => 
-                new Date(b.createdAt) - new Date(a.createdAt)
-            );
-            
-            return sortedBuilds[0];
         }
-
-        // Функция для получения названия категории
-        function getCategoryName(category) {
-            const categoryNames = {
-                'pvp': { name: 'ПВП', icon: '⚔️', link: 'pvp.html' },
-                'pve': { name: 'ПВЕ', icon: '🛡️', link: 'pve.html' },
-                'zvz': { name: 'ЗВЗ', icon: '🏰', link: 'Zvz.html' },
-                'ss': { name: 'СС', icon: '👤', link: 'smallscale.html' }
-            };
+        
+        // Открыть просмотр билда
+        window.viewBuild = function(buildId) {
+            const builds = JSON.parse(localStorage.getItem('builds')) || [];
+            const build = builds.find(b => b.id === buildId);
             
-            return categoryNames[category] || { name: '???', icon: '❓', link: 'index.html' };
-        }
-
-        // Функция для получения названия класса
-        function getClassName(classType) {
-            const classNames = {
-                'warrior': 'Воин',
-                'mage': 'Маг',
-                'archer': 'Лучник',
-                'assassin': 'Ассасин',
-                'paladin': 'Паладин',
-                'berserker': 'Берсерк'
-            };
-            return classNames[classType] || '???';
-        }
-
-        // Функция для отображения последнего билда
-        function displayLatestBuild() {
-            const container = document.getElementById('latestBuildContainer');
-            const latestBuild = getLatestBuild();
-            
-            if (!latestBuild) {
-                container.innerHTML = `
-                    <div class="no-builds">
-                        <span class="no-builds-icon">📭</span>
-                        <h3 style="color: #ff9a00; margin-bottom: 15px; font-size: 1.5rem;">Нет билдов</h3>
-                        <p style="color: #666; font-size: 0.9rem;">Создайте первый билд</p>
-                    </div>
-                `;
+            if (!build) {
+                alert('Билд не найден!');
                 return;
             }
             
-            const category = getCategoryName(latestBuild.category);
-            const totalLevel = 40 + 
-                (latestBuild.stats?.strength || 0) + 
-                (latestBuild.stats?.dexterity || 0) + 
-                (latestBuild.stats?.intelligence || 0) + 
-                (latestBuild.stats?.endurance || 0);
+            const categoryNames = {
+                'pvp': '⚔️ ПВП',
+                'pve': '🐉 ПВЕ',
+                'zvz': '⚡ ZvZ',
+                'smallscale': '👥 Смолскейл'
+            };
             
-            container.innerHTML = `
-                <div class="latest-build-card">
-                    <div class="build-header">
-                        <div>
-                            <h3 class="build-name">${latestBuild.name}</h3>
-                            <div class="build-meta">
-                                <div class="meta-item">
-                                    <span>📅</span>
-                                    <span>${new Date(latestBuild.createdAt).toLocaleDateString('ru-RU')}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span>🆔</span>
-                                    <span>#${latestBuild.id.toString().slice(-6)}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="build-category-badge">
-                            <span>${category.icon}</span>
-                            <span>${category.name}</span>
-                        </div>
-                    </div>
-                    
-                    <div style="color: #ccc; line-height: 1.6; margin-bottom: 25px; padding: 15px; 
-                         background: rgba(0,0,0,0.2); border-radius: 8px;">
-                        ${latestBuild.description || '<em style="color: #888;">Нет описания</em>'}
-                    </div>
-                    
-                    <div class="build-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Класс</div>
-                            <div class="detail-value">${getClassName(latestBuild.class)}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Оружие</div>
-                            <div class="detail-value">${latestBuild.weapon || '—'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Уровень</div>
-                            <div class="detail-value" style="color: #ff9a00; font-size: 1.3rem;">
-                                ${totalLevel}
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Сложность</div>
-                            <div class="detail-value">
-                                ${latestBuild.difficulty || 5}/10
-                                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 5px;">
-                                    <div style="width: ${(latestBuild.difficulty || 5) * 10}%; height: 100%; 
-                                         background: linear-gradient(90deg, #ff6a00, #ff9a00); border-radius: 3px;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 25px; text-align: center;">
-                        <a href="${category.link}" 
-                           style="color: #ff9a00; text-decoration: none; font-weight: 500;">
-                            👁️ Все билды ${category.name}
-                        </a>
-                    </div>
+            const date = new Date(build.createdAt).toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let itemsHTML = '';
+            if (build.items && build.items.length > 0) {
+                itemsHTML = '<div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-top: 20px;">';
+                itemsHTML += '<h4 style="color: #a78bfa; margin-bottom: 15px;"><i class="fas fa-list"></i> Экипировка:</h4>';
+                itemsHTML += '<ul style="list-style: none; padding: 0;">';
+                build.items.forEach(item => {
+                    itemsHTML += `<li style="padding: 8px 0; border-bottom: 1px solid #4c1d95; color: #ddd6fe;">${item}</li>`;
+                });
+                itemsHTML += '</ul></div>';
+            }
+            
+            const modalHTML = `
+                <h2 style="color: #c4b5fd; margin-bottom: 10px; font-size: 2rem;">${build.name}</h2>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <span style="background: #7c3aed; color: white; padding: 5px 15px; border-radius: 20px;">
+                        ${categoryNames[build.category] || build.category}
+                    </span>
+                    <span style="color: #a0a0ff;">
+                        <i class="far fa-calendar"></i> ${date}
+                    </span>
                 </div>
+                
+                ${build.description ? `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #a78bfa; margin-bottom: 10px;"><i class="fas fa-scroll"></i> Описание тактики:</h3>
+                        <p style="color: #ddd6fe; line-height: 1.6; font-size: 1.1rem;">${build.description}</p>
+                    </div>
+                ` : ''}
+                
+                ${itemsHTML}
+                
+                ${build.imageURL ? `
+                    <div style="margin-top: 25px; text-align: center;">
+                        <h4 style="color: #a78bfa; margin-bottom: 15px;"><i class="fas fa-image"></i> Изображение билда:</h4>
+                        <img src="${build.imageURL}" style="max-width: 100%; border-radius: 10px; border: 2px solid #7c3aed;">
+                    </div>
+                ` : ''}
             `;
-        }
-
-        // Автообновление последнего билда
-        function updateLatestBuild() {
-            displayLatestBuild();
-            setTimeout(updateLatestBuild, 3000);
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            displayLatestBuild();
-            updateLatestBuild();
-        });
+            
+            document.getElementById('modalContent').innerHTML = modalHTML;
+            document.getElementById('buildModal').style.display = 'flex';
+        };
+        
+        // Закрыть просмотр
+        window.closeBuildModal = function() {
+            document.getElementById('buildModal').style.display = 'none';
+        };
+        
+        // Удаление билда
+        let deleteBuildId = null;
+        
+        window.showDeleteModal = function(buildId) {
+            deleteBuildId = buildId;
+            document.getElementById('deleteModal').style.display = 'flex';
+            document.getElementById('deletePassword').value = '';
+            document.getElementById('deleteError').style.display = 'none';
+            document.getElementById('deletePassword').focus();
+        };
+        
+        window.closeDeleteModal = function() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteBuildId = null;
+        };
+        
+        window.confirmDelete = function() {
+            const password = document.getElementById('deletePassword').value;
+            const errorElement = document.getElementById('deleteError');
+            
+            if (password !== '92421lis932') {
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            if (!deleteBuildId) return;
+            
+            let builds = JSON.parse(localStorage.getItem('builds')) || [];
+            builds = builds.filter(b => b.id !== deleteBuildId);
+            localStorage.setItem('builds', JSON.stringify(builds));
+            
+            closeDeleteModal();
+            updateStats();
+            renderBuilds();
+            
+            // Показать уведомление
+            alert('✅ Билд успешно удален!');
+        };
     </script>
 </body>
 </html>
