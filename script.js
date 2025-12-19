@@ -1,17 +1,9 @@
-// ==================== КОНФИГУРАЦИЯ ====================
-const CATEGORIES = {
-    'pvp': { id: 1, name: '⚔️ ПВП', page: 'pvp.html' },
-    'pve': { id: 2, name: '🐉 ПВЕ', page: 'pve.html' },
-    'zvz': { id: 3, name: '⚡ ZvZ', page: 'Zvz.html' },
-    'smallscale': { id: 4, name: '👥 Смолскейл', page: 'smallscale.html' }
-};
-
-// ТВОЙ СЕКРЕТНЫЙ ПАРОЛЬ (один для всего)
-const SECRET_PASSWORD = "92421lis932"; // ← ЗАМЕНИ НА СВОЙ!
+// ==================== КОНСТАНТЫ ====================
+const SECRET_PASSWORD = "92421lis932"; // Твой пароль
 
 // ==================== СОЗДАНИЕ БИЛДА ====================
 function createBuild(name, description, items, category, imageURL, videoURL) {
-    console.log('🛠️ Создаю билд:', name);
+    console.log('Создаю билд:', name);
     
     let builds = JSON.parse(localStorage.getItem('builds')) || [];
     
@@ -21,7 +13,6 @@ function createBuild(name, description, items, category, imageURL, videoURL) {
         description: description || '',
         items: items || [],
         category: category || 'pvp',
-        categoryId: CATEGORIES[category]?.id || 1,
         imageURL: imageURL || '',
         videoURL: videoURL || '',
         createdAt: new Date().toISOString()
@@ -35,10 +26,14 @@ function createBuild(name, description, items, category, imageURL, videoURL) {
         renderBuilds();
     }
     
+    if (typeof updateStats === 'function') {
+        updateStats();
+    }
+    
     return newBuild;
 }
 
-// ==================== ОТОБРАЖЕНИЕ БИЛДОВ НА ГЛАВНОЙ ====================
+// ==================== ОТОБРАЖЕНИЕ БИЛДОВ ====================
 function renderBuilds() {
     const container = document.getElementById('buildsContainer');
     if (!container) return;
@@ -46,17 +41,26 @@ function renderBuilds() {
     const builds = JSON.parse(localStorage.getItem('builds')) || [];
     
     if (builds.length === 0) {
-        container.innerHTML = '<p class="empty-state">😔 Пока нет созданных билдов</p>';
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📁</div>
+                <h3 style="color: #e6e6ff; margin-bottom: 15px;">Пока нет созданных билдов</h3>
+                <p style="color: #c0c0ff; margin-bottom: 25px;">Начните с добавления первого билда в коллекцию</p>
+                <a href="add-build.html" class="add-build-btn" style="display: inline-flex;">
+                    <i class="fas fa-plus-circle"></i> Создать первый билд
+                </a>
+            </div>
+        `;
         return;
     }
     
-    // Сортируем по дате (новые сначала)
+    // Сортируем по дате (новые сверху)
     builds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
     let html = '<div class="builds-grid">';
     
     builds.forEach(build => {
-        // Определяем иконку категории
+        // Иконка категории
         let categoryIcon = '📦';
         let categoryName = 'Другое';
         
@@ -67,39 +71,42 @@ function renderBuilds() {
             case 'smallscale': categoryIcon = '👥'; categoryName = 'Смолскейл'; break;
         }
         
-        // Форматируем дату
+        // Дата
         const date = new Date(build.createdAt);
-        const formattedDate = date.toLocaleDateString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
+        const formattedDate = date.toLocaleDateString('ru-RU');
+        
+        // Превью предметов (первые 3)
+        const previewItems = build.items ? build.items.slice(0, 3) : [];
         
         html += `
             <div class="build-card">
                 <div class="build-header">
                     <div>
-                        <div class="build-name" style="cursor: pointer; color: #4cc9f0;" 
-                             onclick="showBuildInfo(${build.id})">
-                            ${escapeHtml(build.name)}
-                        </div>
+                        <div class="build-name" onclick="viewBuild(${build.id})">${escapeHtml(build.name)}</div>
                         <div class="build-category">${categoryIcon} ${categoryName}</div>
                     </div>
                 </div>
                 
                 <p class="build-description">${escapeHtml(build.description || 'Нет описания')}</p>
                 
+                ${previewItems.length > 0 ? `
+                    <div class="build-items-preview">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            ${previewItems.map(item => `<li style="padding: 3px 0; color: #c0c0ff;">• ${escapeHtml(item)}</li>`).join('')}
+                            ${build.items.length > 3 ? `<li style="padding: 3px 0; color: #9370db;">... и ещё ${build.items.length - 3}</li>` : ''}
+                        </ul>
+                    </div>
+                ` : ''}
+                
                 <div class="build-footer">
                     <div class="build-date">
                         <i class="far fa-calendar"></i> ${formattedDate}
                     </div>
                     <div class="build-actions">
-                        <button onclick="showBuildInfo(${build.id})" 
-                                style="background: rgba(76, 201, 240, 0.1); color: #4cc9f0; margin-right: 8px; padding: 6px 12px; border-radius: 6px; border: 1px solid #30363d; cursor: pointer;">
+                        <button class="action-btn view-btn" onclick="viewBuild(${build.id})">
                             <i class="fas fa-eye"></i> Просмотр
                         </button>
-                        <button onclick="showDeleteModal(${build.id})" 
-                                style="background: rgba(248, 81, 73, 0.1); color: #f85149; padding: 6px 12px; border-radius: 6px; border: 1px solid #30363d; cursor: pointer;">
+                        <button class="action-btn delete-btn" onclick="showDeleteModal(${build.id})">
                             <i class="fas fa-trash"></i> Удалить
                         </button>
                     </div>
@@ -112,219 +119,6 @@ function renderBuilds() {
     container.innerHTML = html;
 }
 
-// ==================== ПОКАЗАТЬ ИНФОРМАЦИЮ О БИЛДЕ ====================
-function showBuildInfo(buildId) {
-    const builds = JSON.parse(localStorage.getItem('builds')) || [];
-    const build = builds.find(b => b.id === buildId);
-    
-    if (!build) {
-        alert('Билд не найден!');
-        return;
-    }
-    
-    const categoryNames = {
-        'pvp': '⚔️ ПВП',
-        'pve': '🐉 ПВЕ',
-        'zvz': '⚡ ZvZ',
-        'smallscale': '👥 Смолскейл'
-    };
-    
-    const categoryName = categoryNames[build.category] || build.category;
-    const date = new Date(build.createdAt).toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    
-    // Создаем модальное окно
-    const modalHTML = `
-        <div id="buildInfoModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000;">
-            <div style="background: #161b22; border-radius: 15px; padding: 30px; width: 90%; max-width: 600px; border: 2px solid #4cc9f0; max-height: 80vh; overflow-y: auto;">
-                <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #30363d;">
-                    <h3 style="color: #4cc9f0; font-size: 1.5rem;">
-                        <i class="fas fa-info-circle"></i> Информация о билде
-                    </h3>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <div style="background: rgba(76, 201, 240, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4 style="color: #4cc9f0; margin-bottom: 10px;">${escapeHtml(build.name)}</h4>
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
-                            <span style="background: rgba(76, 201, 240, 0.2); padding: 5px 10px; border-radius: 5px;">
-                                ${categoryName}
-                            </span>
-                            <span style="color: #8b949e;">
-                                <i class="far fa-calendar"></i> ${date}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    ${build.description ? `
-                        <div style="margin-bottom: 20px;">
-                            <h5 style="color: #72efdd; margin-bottom: 10px;"><i class="fas fa-scroll"></i> Описание</h5>
-                            <p style="color: #c9d1d9; line-height: 1.6;">${escapeHtml(build.description)}</p>
-                        </div>
-                    ` : ''}
-                    
-                    ${build.items && build.items.length > 0 ? `
-                        <div style="margin-bottom: 20px;">
-                            <h5 style="color: #72efdd; margin-bottom: 10px;"><i class="fas fa-box-open"></i> Экипировка</h5>
-                            <ul style="list-style: none; padding: 0; margin: 0; background: rgba(13,17,23,0.5); padding: 15px; border-radius: 8px;">
-                                ${build.items.map(item => `<li style="padding: 5px 0; border-bottom: 1px solid #30363d; color: #c9d1d9;">${escapeHtml(item)}</li>`).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button onclick="closeBuildInfo()" 
-                            style="padding: 12px 30px; border-radius: 8px; border: 1px solid #30363d; background: rgba(248,81,73,0.1); color: #f85149; font-weight: 600; cursor: pointer;">
-                        <i class="fas fa-times"></i> Закрыть
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHTML;
-    document.body.appendChild(modalContainer);
-    
-    // Закрытие по клику на фон
-    const modal = document.getElementById('buildInfoModal');
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeBuildInfo();
-            }
-        });
-    }
-}
-
-// ==================== УДАЛЕНИЕ БИЛДА С ПАРОЛЕМ ====================
-function showDeleteModal(buildId) {
-    const modalHTML = `
-        <div id="deleteModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000;">
-            <div style="background: #161b22; border-radius: 15px; padding: 30px; width: 90%; max-width: 500px; border: 2px solid #f85149;">
-                <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #30363d;">
-                    <h3 style="color: #f85149; font-size: 1.5rem;">
-                        <i class="fas fa-exclamation-triangle"></i> Удаление билда
-                    </h3>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <p style="color: #8b949e; text-align: center; margin-bottom: 20px;">
-                        Введите пароль для подтверждения удаления:
-                    </p>
-                    
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; color: #b8c1ec; font-weight: 500;">
-                            <i class="fas fa-key"></i> Пароль подтверждения
-                        </label>
-                        <input type="password" id="deletePassword" 
-                               style="width: 100%; padding: 12px 15px; background: rgba(30,30,46,0.8); border: 1px solid #4a4a6d; border-radius: 10px; color: #f0f0f0; font-size: 1rem;"
-                               placeholder="Введите пароль">
-                        <div id="deleteError" style="color: #f85149; font-size: 0.85rem; margin-top: 5px; display: none;">
-                            <i class="fas fa-exclamation-circle"></i> Неверный пароль!
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button onclick="closeDeleteModal()" 
-                            style="padding: 12px 30px; border-radius: 8px; border: 1px solid #30363d; background: rgba(88,166,255,0.1); color: #58a6ff; font-weight: 600; cursor: pointer;">
-                        <i class="fas fa-times"></i> Отмена
-                    </button>
-                    <button onclick="confirmDelete(${buildId})" 
-                            style="padding: 12px 30px; border-radius: 8px; border: none; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; font-weight: 600; cursor: pointer;">
-                        <i class="fas fa-trash"></i> Удалить
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHTML;
-    document.body.appendChild(modalContainer);
-    
-    // Фокус на поле пароля
-    setTimeout(() => {
-        const input = document.getElementById('deletePassword');
-        if (input) input.focus();
-    }, 100);
-    
-    // Enter для подтверждения
-    const passwordInput = document.getElementById('deletePassword');
-    if (passwordInput) {
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                confirmDelete(buildId);
-            }
-        });
-    }
-}
-
-function closeDeleteModal() {
-    const modal = document.getElementById('deleteModal');
-    if (modal) modal.remove();
-}
-
-function confirmDelete(buildId) {
-    const passwordInput = document.getElementById('deletePassword');
-    const errorElement = document.getElementById('deleteError');
-    
-    if (!passwordInput || !passwordInput.value.trim()) {
-        if (errorElement) {
-            errorElement.textContent = "Введите пароль!";
-            errorElement.style.display = 'block';
-            passwordInput.style.borderColor = '#f85149';
-            passwordInput.focus();
-        }
-        return;
-    }
-    
-    if (passwordInput.value !== SECRET_PASSWORD) {
-        if (errorElement) {
-            errorElement.textContent = "Неверный пароль!";
-            errorElement.style.display = 'block';
-            passwordInput.style.borderColor = '#f85149';
-            passwordInput.value = '';
-            passwordInput.focus();
-        }
-        return;
-    }
-    
-    // Удаляем билд
-    let builds = JSON.parse(localStorage.getItem('builds')) || [];
-    const initialLength = builds.length;
-    
-    builds = builds.filter(build => build.id !== buildId);
-    localStorage.setItem('builds', JSON.stringify(builds));
-    
-    if (builds.length < initialLength) {
-        alert('✅ Билд успешно удален!');
-        closeDeleteModal();
-        
-        // Обновляем отображение
-        if (typeof renderBuilds === 'function') {
-            renderBuilds();
-        }
-        
-        // Перезагружаем через 0.5 сек
-        setTimeout(() => {
-            window.location.reload();
-        }, 500);
-    }
-}
-
-function closeBuildInfo() {
-    const modal = document.getElementById('buildInfoModal');
-    if (modal) modal.remove();
-}
-
 // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
 function escapeHtml(text) {
     if (!text) return '';
@@ -333,58 +127,40 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Старая функция удаления (для совместимости)
-function deleteBuild(buildId) {
-    showDeleteModal(buildId);
-}
-
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-// Автоматически запускаем renderBuilds на главной
-if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof renderBuilds === 'function') {
-            renderBuilds();
-        }
+// ==================== ДЛЯ СТРАНИЦ КАТЕГОРИЙ ====================
+function renderCategoryBuilds(category) {
+    const container = document.getElementById('buildsContainer');
+    if (!container) return;
+    
+    const allBuilds = JSON.parse(localStorage.getItem('builds')) || [];
+    const categoryBuilds = allBuilds.filter(b => b.category === category);
+    
+    if (categoryBuilds.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📁</div>
+                <h3 style="color: #e6e6ff; margin-bottom: 15px;">Пока нет билдов в этой категории</h3>
+                <a href="add-build.html" class="add-build-btn" style="display: inline-flex;">
+                    <i class="fas fa-plus-circle"></i> Создать билд
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Тот же код что и в renderBuilds, но фильтруем по категории
+    let html = '<div class="builds-grid">';
+    
+    categoryBuilds.forEach(build => {
+        // ... тот же HTML что и выше ...
+        // (скопируй из renderBuilds и измени только фильтрацию)
     });
+    
+    container.innerHTML = html;
 }
 
-// Сделаем функции доступными глобально
+// ==================== ЭКСПОРТ ФУНКЦИЙ ====================
 window.createBuild = createBuild;
 window.renderBuilds = renderBuilds;
-window.showBuildInfo = showBuildInfo;
-window.closeBuildInfo = closeBuildInfo;
-window.showDeleteModal = showDeleteModal;
-window.closeDeleteModal = closeDeleteModal;
-window.confirmDelete = confirmDelete;
-window.deleteBuild = deleteBuild;
-function createBuild(name, description, items, category, imageURL, videoURL) {
-    console.log('🛠️ Создаю билд:', name);
-    
-    let builds = JSON.parse(localStorage.getItem('builds')) || [];
-    
-    const newBuild = {
-        id: Date.now(),
-        name: name || 'Без названия',
-        description: description || '',
-        items: items || [],
-        category: category || 'pvp',
-        categoryId: CATEGORIES[category]?.id || 1,
-        imageURL: imageURL || '', // Картинка в base64
-        videoURL: videoURL || '',
-        createdAt: new Date().toISOString()
-    };
-    
-    builds.push(newBuild);
-    localStorage.setItem('builds', JSON.stringify(builds));
-    
-    // Если картинка большая, можно очистить консоль
-    if (imageURL && imageURL.length > 1000) {
-        console.log('Изображение сохранено (base64)');
-    }
-    
-    if (typeof renderBuilds === 'function') {
-        renderBuilds();
-    }
-    
-    return newBuild;
-}
+window.renderCategoryBuilds = renderCategoryBuilds;
+window.escapeHtml = escapeHtml;
