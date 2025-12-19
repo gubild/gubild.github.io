@@ -1,152 +1,137 @@
-// РАБОТАЮЩАЯ функция создания билда
+// ==================== КОНФИГУРАЦИЯ ====================
+const CATEGORIES = {
+    'pvp': { id: 1, name: '⚔️ ПВП', page: 'pvp.html' },
+    'pve': { id: 2, name: '🐉 ПВЕ', page: 'pve.html' },
+    'zvz': { id: 3, name: '⚡ ZvZ', page: 'Zvz.html' },
+    'smallscale': { id: 4, name: '👥 Смолскейл', page: 'smallscale.html' }
+};
+
+// ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 function createBuild(name, description, items, category, imageURL, videoURL) {
-    // 1. Получаем текущие билды ИЗ ХРАНИЛИЩА
-    const builds = JSON.parse(localStorage.getItem('builds')) || [];
-    
-    // 2. Проверяем данные (важно!)
-    console.log("Создаю билд с данными:", {name, description, items, category});
-    
-    // 3. Создаем объект билда
+    console.log('Создаю билд:', name);
+    let builds = JSON.parse(localStorage.getItem('builds')) || [];
+
     const newBuild = {
-        id: Date.now(), // уникальный ID
+        id: Date.now(),
         name: name || 'Без названия',
         description: description || '',
         items: items || [],
-        category: category || 'pvp',
+        category: category || 'pvp', // Используем текстовый ключ: 'pvp', 'pve' и т.д.
         imageURL: imageURL || '',
+        videoURL: videoURL || '',
         createdAt: new Date().toISOString()
     };
-    
-    // 4. Добавляем в массив
+
     builds.push(newBuild);
-    
-    // 5. СОХРАНЯЕМ в localStorage (самое важное!)
     localStorage.setItem('builds', JSON.stringify(builds));
-    
-    // 6. Проверяем что сохранилось
-    const checkBuilds = JSON.parse(localStorage.getItem('builds')) || [];
-    console.log("После сохранения, всего билдов:", checkBuilds.length);
-    console.log("Последний билд:", checkBuilds[checkBuilds.length - 1]);
-    
-    alert(`✅ Билд "${newBuild.name}" создан! В системе теперь ${checkBuilds.length} билдов.`);
-    
+    alert(`✅ Билд "${name}" создан в категории ${CATEGORIES[category]?.name || category}!`);
     return newBuild;
 }
 
-// Функция для отображения билдов
+// Функция для ОТОБРАЖЕНИЯ билдов на главной (index.html)
 function renderBuilds() {
-    const builds = JSON.parse(localStorage.getItem('builds')) || [];
     const container = document.getElementById('buildsContainer');
-    
-    if (!container) {
-        console.log("Контейнер buildsContainer не найден!");
-        return;
-    }
-    
-    if (builds.length === 0) {
-        container.innerHTML = '<p>Пока нет созданных билдов</p>';
-        return;
-    }
-    
-    let html = '<h2>Ваши билды (' + builds.length + ')</h2>';
-    
-    builds.forEach(build => {
-        html += `
-            <div style="border: 1px solid #ccc; padding: 15px; margin: 10px; border-radius: 8px;">
-                <h3>${build.name}</h3>
-                <p><strong>Категория:</strong> ${build.category}</p>
-                <p>${build.description}</p>
-                <p><strong>Предметы:</strong> ${build.items.join(', ') || 'Нет предметов'}</p>
-                <small>Создан: ${new Date(build.createdAt).toLocaleDateString()}</small>
-            </div>
-        `;
-    });
-    
-    container.innerHTML = html;
-}
+    if (!container) return;
 
-// Запускаем отображение при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Страница загружена, проверяем билды...");
-    renderBuilds();
-});
-// =============== ФУНКЦИЯ ОТОБРАЖЕНИЯ БИЛДОВ ===============
-function renderBuilds() {
-    console.log("🔄 renderBuilds вызвана");
-    
-    // 1. Ищем контейнер для билдов
-    const buildsContainer = document.getElementById('buildsContainer');
-    if (!buildsContainer) {
-        console.log("❌ Не найден элемент с id='buildsContainer'!");
-        return;
-    }
-    
-    // 2. Загружаем билды из хранилища
     const builds = JSON.parse(localStorage.getItem('builds')) || [];
-    console.log("📊 Найдено билдов:", builds.length);
-    
-    // 3. Если билдов нет — показываем сообщение
     if (builds.length === 0) {
-        buildsContainer.innerHTML = '<p class="no-builds">😔 Пока нет созданных билдов</p>';
+        container.innerHTML = '<p>Пока нет созданных билдов.</p>';
         return;
     }
-    
-    // 4. Создаем HTML для каждого билда
-    let html = '<div class="builds-grid">';
-    
+
+    let html = '<h2>Все билды</h2><div class="builds-grid">';
     builds.forEach(build => {
+        const cat = CATEGORIES[build.category] || CATEGORIES.pvp;
         html += `
             <div class="build-card">
-                <div class="build-header">
-                    <h3>${escapeHtml(build.name)}</h3>
-                    <span class="build-category">${getCategoryName(build.category)}</span>
-                </div>
-                <p class="build-description">${escapeHtml(build.description || 'Нет описания')}</p>
-                <div class="build-items">
-                    <strong>🎒 Предметы:</strong>
-                    <ul>
-                        ${(build.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}
-                    </ul>
-                </div>
-                <div class="build-footer">
-                    <small>Создан: ${new Date(build.createdAt).toLocaleDateString()}</small>
-                    <button onclick="deleteBuild(${build.id})" class="delete-btn">🗑️ Удалить</button>
-                </div>
-            </div>
-        `;
+                <h4>${build.name}</h4>
+                <span class="category-badge">${cat.name}</span>
+                <p>${build.description || 'Нет описания'}</p>
+                <a href="${cat.page}">Перейти в категорию →</a>
+            </div>`;
     });
-    
-    html += '</div>';
-    buildsContainer.innerHTML = html;
-    
-    console.log("✅ Билды отображены успешно!");
+    container.innerHTML = html + '</div>';
 }
 
-// =============== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===============
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+// САМАЯ ВАЖНАЯ ФУНКЦИЯ: загрузка билдов для КОНКРЕТНОЙ страницы категории (pvp.html, pve.html и т.д.)
+function loadCategoryBuilds() {
+    // 1. Определяем, на какой странице категории мы находимся
+    const currentPage = window.location.pathname.split('/').pop(); // 'pvp.html', 'pve.html' и т.д.
+    let currentCategoryKey = null;
+
+    // 2. Ищем, какой ключ категории соответствует этой странице
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+        if (cat.page === currentPage) {
+            currentCategoryKey = key;
+            break;
+        }
+    }
+
+    // Если мы не на странице категории — выходим
+    if (!currentCategoryKey) return;
+
+    // 3. Загружаем все билды и фильтруем
+    const allBuilds = JSON.parse(localStorage.getItem('builds')) || [];
+    const categoryBuilds = allBuilds.filter(build => build.category === currentCategoryKey);
+
+    const container = document.getElementById('categoryBuildsContainer');
+    if (!container) return;
+
+    // 4. Отображаем
+    if (categoryBuilds.length === 0) {
+        container.innerHTML = `<p>В категории "${CATEGORIES[currentCategoryKey].name}" пока нет билдов.</p>`;
+    } else {
+        let html = `<h2>${CATEGORIES[currentCategoryKey].name} (${categoryBuilds.length})</h2><div class="builds-grid">`;
+        categoryBuilds.forEach(build => {
+            html += `
+                <div class="build-card">
+                    <h3>${build.name}</h3>
+                    <p>${build.description || 'Нет описания'}</p>
+                    <p><strong>Предметы:</strong> ${build.items.join(', ') || 'Нет'}</p>
+                </div>`;
+        });
+        container.innerHTML = html + '</div>';
+    }
 }
 
-function getCategoryName(categoryKey) {
-    const categories = {
-        'pvp': '⚔️ ПВП',
-        'pve': '🐉 ПВЕ', 
-        'zvz': '⚡ ZvZ',
-        'smallscale': '👥 Смолскейл'
-    };
-    return categories[categoryKey] || '❓ Другое';
-}
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Страница загружена');
 
-function deleteBuild(buildId) {
-    if (!confirm('Удалить этот билд?')) return;
-    
-    let builds = JSON.parse(localStorage.getItem('builds')) || [];
-    builds = builds.filter(build => build.id !== buildId);
-    localStorage.setItem('builds', JSON.stringify(builds));
-    
-    renderBuilds(); // Обновляем отображение
-    alert('🗑️ Билд удален!');
-}
+    // Если есть форма для создания билда (add-build.html) — настраиваем её
+    const buildForm = document.getElementById('buildForm');
+    if (buildForm) {
+        // Заполняем select в форме ТОЛЬКО нашими категориями
+        const categorySelect = document.getElementById('buildCategory');
+        if (categorySelect) {
+            categorySelect.innerHTML = ''; // Очищаем
+            for (const [key, cat] of Object.entries(CATEGORIES)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = cat.name;
+                categorySelect.appendChild(option);
+            }
+        }
+
+        buildForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('buildName')?.value;
+            const desc = document.getElementById('buildDescription')?.value;
+            const cat = document.getElementById('buildCategory')?.value;
+            // items можно добавить позже
+            createBuild(name, desc, [], cat, '', '');
+            this.reset();
+        });
+    }
+
+    // Автоматически определяем, что отображать:
+    // Если на главной — показываем все билды
+    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+        renderBuilds();
+    }
+    // Если на странице категории — показываем фильтрованные билды
+    else if (['pvp.html', 'pve.html', 'Zvz.html', 'smallscale.html']
+             .some(page => window.location.pathname.endsWith(page))) {
+        loadCategoryBuilds();
+    }
+});
