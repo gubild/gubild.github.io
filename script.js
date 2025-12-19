@@ -135,8 +135,6 @@ function getCategoryName(categoryKey) {
     const categories = {
         'pvp': '⚔️ ПВП',
         'pve': '🐉 ПВЕ', 
-        'farm': '🌾 Фарм',
-        'events': '🎉 Ивенты',
         'zvz': '⚡ ZvZ',
         'smallscale': '👥 Смолскейл'
     };
