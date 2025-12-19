@@ -629,3 +629,338 @@
     </script>
 </body>
 </html>
+<!-- ===== БИЛДЫ СООБЩЕСТВА НА ГЛАВНОЙ ===== -->
+<section id="community-builds" style="
+    margin: 60px 0;
+    padding: 40px;
+    background: rgba(20, 35, 55, 0.95);
+    border-radius: 15px;
+    border: 2px solid #ff9a00;
+">
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="color: #ffd166; font-size: 2.5rem; margin-bottom: 15px;">
+            🏆 Билды сообщества
+        </h2>
+        <p style="color: #8ba3ca; font-size: 1.1rem; max-width: 800px; margin: 0 auto;">
+            Сборка созданные игроками. Добавляйте свои варианты и делитесь опытом!
+        </p>
+        <a href="add-build.html" style="
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #ff9a00, #ff6b00);
+            color: black;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.3s;
+        " onmouseover="this.style.transform='scale(1.05)'" 
+           onmouseout="this.style.transform='scale(1)'">
+            🚀 Добавить свой билд
+        </a>
+    </div>
+
+    <!-- Фильтры по типу -->
+    <div style="
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    ">
+        <button class="filter-btn active" data-type="all" style="
+            padding: 10px 20px;
+            background: #ff9a00;
+            border: none;
+            border-radius: 20px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        ">Все</button>
+        <button class="filter-btn" data-type="pvp" style="
+            padding: 10px 20px;
+            background: rgba(255,107,107,0.3);
+            border: 1px solid #ff6b6b;
+            border-radius: 20px;
+            color: #ff6b6b;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        ">⚔️ ПВП</button>
+        <button class="filter-btn" data-type="pve" style="
+            padding: 10px 20px;
+            background: rgba(78,205,196,0.3);
+            border: 1px solid #4ecdc4;
+            border-radius: 20px;
+            color: #4ecdc4;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        ">🐉 ПВЕ</button>
+        <button class="filter-btn" data-type="ss" style="
+            padding: 10px 20px;
+            background: rgba(255,209,102,0.3);
+            border: 1px solid #ffd166;
+            border-radius: 20px;
+            color: #ffd166;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        ">🏰 СС</button>
+        <button class="filter-btn" data-type="zvz" style="
+            padding: 10px 20px;
+            background: rgba(255,154,0,0.3);
+            border: 1px solid #ff9a00;
+            border-radius: 20px;
+            color: #ff9a00;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        ">🔥 ЗВЗ</button>
+    </div>
+
+    <!-- Контейнер для билдов -->
+    <div id="builds-container" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    ">
+        <!-- Билды будут загружаться сюда -->
+        <div style="
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        ">
+            <p style="color: #8ba3ca; font-size: 1.2rem;">
+                Загрузка билдов...
+            </p>
+        </div>
+    </div>
+
+    <!-- Сообщение если нет билдов -->
+    <div id="no-builds-message" style="
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 10px;
+        margin-top: 20px;
+    ">
+        <p style="color: #ff9a00; font-size: 1.5rem; margin-bottom: 15px;">
+            😔 Пока нет добавленных билдов
+        </p>
+        <p style="color: #8ba3ca; max-width: 600px; margin: 0 auto;">
+            Будьте первым! Нажмите кнопку "Добавить свой билд" выше, чтобы поделиться своей сборкой.
+        </p>
+    </div>
+</section>
+
+<script>
+// Загружаем билды при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadBuilds();
+    setupFilters();
+});
+
+// Загрузка всех билдов
+function loadBuilds() {
+    const builds = JSON.parse(localStorage.getItem('albion_builds') || '{}');
+    displayAllBuilds(builds);
+}
+
+// Отображение всех билдов
+function displayAllBuilds(buildsData) {
+    const container = document.getElementById('builds-container');
+    const noBuildsMessage = document.getElementById('no-builds-message');
+    
+    // Собираем все билды из всех категорий
+    let allBuilds = [];
+    
+    // Перебираем все типы билдов
+    for (const type in buildsData) {
+        if (buildsData[type] && buildsData[type].length > 0) {
+            buildsData[type].forEach(build => {
+                allBuilds.push({
+                    ...build,
+                    buildType: type // Добавляем тип для фильтрации
+                });
+            });
+        }
+    }
+    
+    // Сортируем по дате (новые сверху)
+    allBuilds.sort((a, b) => b.id - a.id);
+    
+    // Если нет билдов
+    if (allBuilds.length === 0) {
+        container.innerHTML = '';
+        noBuildsMessage.style.display = 'block';
+        return;
+    }
+    
+    // Показываем контейнер
+    noBuildsMessage.style.display = 'none';
+    
+    // Отображаем все билды
+    let html = '';
+    allBuilds.forEach(build => {
+        const typeColors = {
+            'pvp': { border: '#ff6b6b', bg: 'rgba(255,107,107,0.1)', text: 'ПВП', icon: '⚔️' },
+            'pve': { border: '#4ecdc4', bg: 'rgba(78,205,196,0.1)', text: 'ПВЕ', icon: '🐉' },
+            'ss': { border: '#ffd166', bg: 'rgba(255,209,102,0.1)', text: 'СС', icon: '🏰' },
+            'zvz': { border: '#ff9a00', bg: 'rgba(255,154,0,0.1)', text: 'ЗВЗ', icon: '🔥' }
+        };
+        
+        const colors = typeColors[build.buildType] || typeColors['pvp'];
+        
+        html += `
+            <div class="build-card" data-type="${build.buildType}" style="
+                background: rgba(30, 50, 80, 0.7);
+                border-radius: 12px;
+                padding: 20px;
+                border-left: 5px solid ${colors.border};
+                transition: transform 0.3s, box-shadow 0.3s;
+                cursor: pointer;
+            " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.3)'" 
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+               onclick="window.location.href='${build.buildType}.html'">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <h3 style="color: white; margin: 0; font-size: 1.3rem;">${build.name || build.weapon}</h3>
+                    <span style="
+                        background: ${colors.border};
+                        color: black;
+                        padding: 5px 12px;
+                        border-radius: 15px;
+                        font-size: 0.9rem;
+                        font-weight: bold;
+                    ">
+                        ${colors.icon} ${colors.text}
+                    </span>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <p style="color: #e0e0e0; margin: 8px 0; font-size: 1.1rem;">
+                        <strong>🗡️ Оружие:</strong> ${build.weapon}
+                    </p>
+                    <p style="color: #8ba3ca; margin: 5px 0; font-size: 0.95rem;">
+                        <strong>🛡️ Броня:</strong> ${build.armor.split('\n').slice(0, 2).join(', ')}...
+                    </p>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        ${build.food ? `<span style="color: #4ecdc4;">🍖 ${build.food}</span>` : ''}
+                        ${build.potion ? `<span style="color: #4fc3f7;">🧪 ${build.potion}</span>` : ''}
+                    </div>
+                </div>
+                
+                <div style="
+                    margin-top: 15px;
+                    padding-top: 15px;
+                    border-top: 1px solid rgba(255,255,255,0.1);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+                    <div style="color: #8ba3ca; font-size: 0.9rem;">
+                        👤 ${build.author || 'Аноним'}
+                    </div>
+                    <div style="color: #8ba3ca; font-size: 0.85rem;">
+                        📅 ${build.date || 'Недавно'}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Настройка фильтров
+function setupFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Убираем активный класс у всех кнопок
+            filterButtons.forEach(btn => {
+                btn.style.background = btn === this ? '' : '';
+                btn.style.color = btn === this ? 'black' : '';
+            });
+            
+            // Добавляем активный класс текущей кнопке
+            const type = this.getAttribute('data-type');
+            
+            if (type === 'all') {
+                this.style.background = '#ff9a00';
+                this.style.color = 'black';
+            } else if (type === 'pvp') {
+                this.style.background = '#ff6b6b';
+                this.style.color = 'black';
+            } else if (type === 'pve') {
+                this.style.background = '#4ecdc4';
+                this.style.color = 'black';
+            } else if (type === 'ss') {
+                this.style.background = '#ffd166';
+                this.style.color = 'black';
+            } else if (type === 'zvz') {
+                this.style.background = '#ff9a00';
+                this.style.color = 'black';
+            }
+            
+            // Фильтруем билды
+            filterBuilds(type);
+        });
+    });
+}
+
+// Фильтрация билдов
+function filterBuilds(type) {
+    const buildCards = document.querySelectorAll('.build-card');
+    
+    buildCards.forEach(card => {
+        if (type === 'all' || card.getAttribute('data-type') === type) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Показываем сообщение если нет билдов после фильтрации
+    const visibleCards = Array.from(buildCards).filter(card => 
+        card.style.display !== 'none'
+    );
+    
+    const noBuildsMessage = document.getElementById('no-builds-message');
+    if (visibleCards.length === 0 && type !== 'all') {
+        noBuildsMessage.innerHTML = `
+            <p style="color: #ff9a00; font-size: 1.5rem; margin-bottom: 15px;">
+                😔 Нет билдов в категории "${getTypeName(type)}"
+            </p>
+            <p style="color: #8ba3ca; max-width: 600px; margin: 0 auto;">
+                Будьте первым кто добавит билд в эту категорию!
+            </p>
+        `;
+        noBuildsMessage.style.display = 'block';
+    } else {
+        noBuildsMessage.style.display = 'none';
+    }
+}
+
+// Получение названия типа
+function getTypeName(type) {
+    const names = {
+        'pvp': 'ПВП',
+        'pve': 'ПВЕ', 
+        'ss': 'СС',
+        'zvz': 'ЗВЗ'
+    };
+    return names[type] || type;
+}
+
+// Автоматическое обновление каждые 30 секунд
+setInterval(loadBuilds, 30000);
+</script>
