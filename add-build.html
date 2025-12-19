@@ -431,3 +431,262 @@
     </script>
 </body>
 </html>
+// В самом начале файла, перед другими функциями, добавляем код проверки
+const ACCESS_CODE = "92421lis932"; // Секретный код
+
+// Функция для запроса кода
+function askForAccessCode() {
+    return new Promise((resolve) => {
+        // Создаем модальное окно для ввода кода
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        `;
+
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 106, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        `;
+
+        modalContent.innerHTML = `
+            <h2 style="color: #ff9a00; margin-bottom: 20px; font-size: 1.8rem;">
+                🔒 Требуется доступ
+            </h2>
+            <p style="margin-bottom: 25px; color: #ccc; line-height: 1.5;">
+                Для создания сборки требуется специальный код доступа.
+                Обратитесь к администратору для получения кода.
+            </p>
+            <div style="margin-bottom: 25px;">
+                <input type="password" 
+                       id="codeInput" 
+                       placeholder="Введите код доступа"
+                       style="width: 100%;
+                              padding: 12px 15px;
+                              background: rgba(20, 20, 35, 0.8);
+                              border: 2px solid rgba(255, 106, 0, 0.2);
+                              border-radius: 8px;
+                              color: #fff;
+                              font-size: 1.1rem;
+                              text-align: center;
+                              letter-spacing: 2px;">
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button id="submitCodeBtn" 
+                        style="flex: 1;
+                               padding: 12px;
+                               background: linear-gradient(45deg, #ff6a00, #ff9a00);
+                               color: white;
+                               border: none;
+                               border-radius: 8px;
+                               font-size: 1rem;
+                               font-weight: 600;
+                               cursor: pointer;
+                               transition: all 0.3s ease;">
+                    Подтвердить
+                </button>
+                <button id="cancelCodeBtn"
+                        style="flex: 1;
+                               padding: 12px;
+                               background: rgba(255, 255, 255, 0.1);
+                               color: #ddd;
+                               border: 1px solid rgba(255, 255, 255, 0.2);
+                               border-radius: 8px;
+                               font-size: 1rem;
+                               font-weight: 600;
+                               cursor: pointer;
+                               transition: all 0.3s ease;">
+                    Отмена
+                </button>
+            </div>
+            <p id="errorMessage" 
+               style="margin-top: 15px;
+                      color: #ff4757;
+                      font-size: 0.9rem;
+                      height: 20px;
+                      display: none;">
+                Неверный код доступа
+            </p>
+        `;
+
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+
+        const codeInput = document.getElementById('codeInput');
+        const submitBtn = document.getElementById('submitCodeBtn');
+        const cancelBtn = document.getElementById('cancelCodeBtn');
+        const errorMsg = document.getElementById('errorMessage');
+
+        // Фокус на поле ввода
+        setTimeout(() => codeInput.focus(), 100);
+
+        // Функция проверки кода (замаскированная)
+        function validateCode(input) {
+            // Сложная проверка без явного сравнения
+            const parts = [
+                92421,      // Первая часть
+                "lis",      // Вторая часть
+                932         // Третья часть
+            ];
+            
+            // Собираем код разными способами
+            const code1 = parts[0] + parts[2]; // 92421932
+            const code2 = parts.join('');      // 92421lis932
+            
+            // Проверяем разными методами
+            const methods = [
+                () => input === code2,
+                () => input === String(parts[0]) + parts[1] + String(parts[2]),
+                () => btoa(input) === btoa(code2),
+                () => {
+                    const arr1 = input.split('');
+                    const arr2 = code2.split('');
+                    return arr1.length === arr2.length && 
+                           arr1.every((char, i) => char === arr2[i]);
+                }
+            ];
+            
+            // Любой метод должен вернуть true
+            return methods.some(method => {
+                try {
+                    return method();
+                } catch {
+                    return false;
+                }
+            });
+        }
+
+        // Обработчик подтверждения
+        submitBtn.onclick = () => {
+            const enteredCode = codeInput.value.trim();
+            
+            if (validateCode(enteredCode)) {
+                document.body.removeChild(modal);
+                resolve(true); // Код верный
+            } else {
+                errorMsg.style.display = 'block';
+                codeInput.style.borderColor = '#ff4757';
+                codeInput.value = '';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                    codeInput.style.borderColor = 'rgba(255, 106, 0, 0.2)';
+                }, 2000);
+            }
+        };
+
+        // Обработчик отмены
+        cancelBtn.onclick = () => {
+            document.body.removeChild(modal);
+            resolve(false); // Пользователь отменил
+        };
+
+        // Enter для подтверждения
+        codeInput.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                submitBtn.click();
+            }
+        };
+
+        // ESC для отмены
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                document.removeEventListener('keydown', escHandler);
+                cancelBtn.click();
+            }
+        });
+    });
+}
+
+// Модифицируем обработчик добавления сборки
+addBuildBtn.addEventListener('click', async function() {
+    // Сначала проверяем код доступа
+    const hasAccess = await askForAccessCode();
+    
+    if (!hasAccess) {
+        showNotification('Доступ запрещен. Требуется код доступа.');
+        return;
+    }
+    
+    // Если код верный, продолжаем создание сборки
+    const buildName = document.getElementById('buildName').value.trim();
+    
+    if (!buildName) {
+        showNotification('Пожалуйста, введите название сборки!');
+        document.getElementById('buildName').focus();
+        return;
+    }
+    
+    // Собираем данные сборки
+    const buildData = {
+        id: Date.now(),
+        name: buildName,
+        class: document.getElementById('characterClass').value,
+        description: document.getElementById('description').value.trim(),
+        weapon: document.getElementById('weapon').value.trim(),
+        difficulty: parseInt(difficultySlider.value),
+        stats: {
+            strength: parseInt(document.getElementById('strength').value),
+            dexterity: parseInt(document.getElementById('dexterity').value),
+            intelligence: parseInt(document.getElementById('intelligence').value),
+            endurance: parseInt(document.getElementById('endurance').value)
+        },
+        createdAt: new Date().toISOString(),
+        // Добавляем скрытую метку, что сборка создана с доступом
+        verified: true
+    };
+    
+    // Получаем существующие сборки или создаем новый массив
+    let builds = JSON.parse(localStorage.getItem('eldenRingBuilds') || '[]');
+    
+    // Добавляем новую сборку
+    builds.push(buildData);
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('eldenRingBuilds', JSON.stringify(builds));
+    
+    // Показываем уведомление
+    showNotification(`Сборка "${buildName}" успешно добавлена!`);
+    
+    // Очищаем форму
+    clearFormBtn.click();
+    
+    // Обновляем предпросмотр
+    updatePreview();
+    
+    console.log('Добавлена сборка:', buildData);
+    console.log('Всего сборок:', builds.length);
+});
+
+// Также можно добавить дополнительную защиту при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Скрываем кнопку добавления до проверки
+    addBuildBtn.style.opacity = '0.8';
+    addBuildBtn.title = 'Требуется код доступа';
+    
+    // Добавляем иконку замка к кнопке
+    const lockIcon = document.createElement('span');
+    lockIcon.textContent = '🔒';
+    lockIcon.style.marginRight = '8px';
+    lockIcon.style.fontSize = '0.9em';
+    
+    if (!addBuildBtn.querySelector('.lock-icon')) {
+        addBuildBtn.insertBefore(lockIcon, addBuildBtn.firstChild);
+        lockIcon.classList.add('lock-icon');
+    }
+});
