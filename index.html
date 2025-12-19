@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elden Ring - База сборок</title>
+    <title>Builds</title>
     <style>
         * {
             margin: 0;
@@ -80,27 +80,10 @@
         }
 
         .category-title {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             color: #ff9a00;
             margin-bottom: 10px;
-        }
-
-        .category-code {
-            background: rgba(255, 106, 0, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 1.2rem;
             font-weight: bold;
-            color: #ff9a00;
-            display: inline-block;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .category-description {
-            color: #ccc;
-            font-size: 0.95rem;
-            line-height: 1.4;
         }
 
         .latest-build-section {
@@ -255,7 +238,7 @@
             }
             
             .category-title {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
         }
     </style>
@@ -263,38 +246,29 @@
 <body>
     <div class="container">
         <header>
-            <h1>⚔️ Elden Ring Builds</h1>
-            <p class="subtitle">Система сборок для разных типов контента</p>
+            <h1>Builds</h1>
         </header>
 
-        <!-- 4 оригинальные категории -->
+        <!-- 4 категории -->
         <div class="categories-grid">
-            <a href="category.html?type=pvp" class="category-card">
+            <a href="PvP.html" class="category-card">
                 <span class="category-icon">⚔️</span>
-                <div class="category-code">ПВП</div>
-                <h2 class="category-title">Player vs Player</h2>
-                <p class="category-description">Сборки для сражений против других игроков в дуэлях и вторжениях</p>
+                <h2 class="category-title">ПВП</h2>
             </a>
 
-            <a href="category.html?type=pve" class="category-card">
+            <a href="PvE.html" class="category-card">
                 <span class="category-icon">🛡️</span>
-                <div class="category-code">ПВЕ</div>
-                <h2 class="category-title">Player vs Environment</h2>
-                <p class="category-description">Сборки для прохождения PvE контента, подземелий и квестов</p>
+                <h2 class="category-title">ПВЕ</h2>
             </a>
 
-            <a href="category.html?type=zvz" class="category-card">
+            <a href="ZvZ.html" class="category-card">
                 <span class="category-icon">🏰</span>
-                <div class="category-code">ЗВЗ</div>
-                <h2 class="category-title">Защита баз/зон</h2>
-                <p class="category-description">Сборки для защиты и захвата контрольных точек и территорий</p>
+                <h2 class="category-title">ЗВЗ</h2>
             </a>
 
-            <a href="category.html?type=ss" class="category-card">
+            <a href="SS.html" class="category-card">
                 <span class="category-icon">👤</span>
-                <div class="category-code">СС</div>
-                <h2 class="category-title">Соло сборки</h2>
-                <p class="category-description">Сборки для одиночного прохождения без поддержки группы</p>
+                <h2 class="category-title">СС</h2>
             </a>
         </div>
 
@@ -302,7 +276,7 @@
         <div class="latest-build-section">
             <div class="section-header">
                 <span class="section-icon">🆕</span>
-                <h2 class="section-title">Последняя добавленная сборка</h2>
+                <h2 class="section-title">Последний добавленный билд</h2>
             </div>
             
             <div id="latestBuildContainer">
@@ -311,11 +285,11 @@
         </div>
 
         <div style="text-align: center; margin-top: 40px;">
-            <a href="add-build.html" class="add-build-btn">➕ Создать новую сборку</a>
+            <a href="add-build.html" class="add-build-btn">➕ Новый билд</a>
         </div>
 
         <footer>
-            <p>© 2024 Elden Ring Builds | Система категорий: ПВП, ПВЕ, ЗВЗ, СС</p>
+            <p>© 2024 Builds</p>
         </footer>
     </div>
 
@@ -339,13 +313,13 @@
         // Функция для получения названия категории
         function getCategoryName(category) {
             const categoryNames = {
-                'pvp': { name: 'ПВП', full: 'Player vs Player', icon: '⚔️' },
-                'pve': { name: 'ПВЕ', full: 'Player vs Environment', icon: '🛡️' },
-                'zvz': { name: 'ЗВЗ', full: 'Защита зон', icon: '🏰' },
-                'ss': { name: 'СС', full: 'Соло сборки', icon: '👤' }
+                'pvp': { name: 'ПВП', icon: '⚔️', link: 'PvP.html' },
+                'pve': { name: 'ПВЕ', icon: '🛡️', link: 'PvE.html' },
+                'zvz': { name: 'ЗВЗ', icon: '🏰', link: 'ZvZ.html' },
+                'ss': { name: 'СС', icon: '👤', link: 'SS.html' }
             };
             
-            return categoryNames[category] || { name: 'Другое', full: 'Другая категория', icon: '❓' };
+            return categoryNames[category] || { name: '???', icon: '❓', link: 'index.html' };
         }
 
         // Функция для получения названия класса
@@ -358,7 +332,7 @@
                 'paladin': 'Паладин',
                 'berserker': 'Берсерк'
             };
-            return classNames[classType] || 'Неизвестный класс';
+            return classNames[classType] || '???';
         }
 
         // Функция для отображения последнего билда
@@ -370,9 +344,8 @@
                 container.innerHTML = `
                     <div class="no-builds">
                         <span class="no-builds-icon">📭</span>
-                        <h3 style="color: #ff9a00; margin-bottom: 15px; font-size: 1.5rem;">База сборок пуста</h3>
-                        <p style="margin-bottom: 10px;">Создайте первую сборку для этого раздела</p>
-                        <p style="color: #666; font-size: 0.9rem;">Выберите одну из 4 категорий: ПВП, ПВЕ, ЗВЗ или СС</p>
+                        <h3 style="color: #ff9a00; margin-bottom: 15px; font-size: 1.5rem;">Нет билдов</h3>
+                        <p style="color: #666; font-size: 0.9rem;">Создайте первый билд</p>
                     </div>
                 `;
                 return;
@@ -403,32 +376,32 @@
                         </div>
                         <div class="build-category-badge">
                             <span>${category.icon}</span>
-                            <span>${category.name} (${category.full})</span>
+                            <span>${category.name}</span>
                         </div>
                     </div>
                     
                     <div style="color: #ccc; line-height: 1.6; margin-bottom: 25px; padding: 15px; 
                          background: rgba(0,0,0,0.2); border-radius: 8px;">
-                        ${latestBuild.description || '<em style="color: #888;">Описание отсутствует</em>'}
+                        ${latestBuild.description || '<em style="color: #888;">Нет описания</em>'}
                     </div>
                     
                     <div class="build-details">
                         <div class="detail-item">
-                            <div class="detail-label">Класс персонажа</div>
+                            <div class="detail-label">Класс</div>
                             <div class="detail-value">${getClassName(latestBuild.class)}</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">Основное оружие</div>
-                            <div class="detail-value">${latestBuild.weapon || 'Не указано'}</div>
+                            <div class="detail-label">Оружие</div>
+                            <div class="detail-value">${latestBuild.weapon || '—'}</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">Общий уровень</div>
+                            <div class="detail-label">Уровень</div>
                             <div class="detail-value" style="color: #ff9a00; font-size: 1.3rem;">
                                 ${totalLevel}
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">Сложность сборки</div>
+                            <div class="detail-label">Сложность</div>
                             <div class="detail-value">
                                 ${latestBuild.difficulty || 5}/10
                                 <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 5px;">
@@ -441,9 +414,9 @@
                     </div>
                     
                     <div style="margin-top: 25px; text-align: center;">
-                        <a href="category.html?type=${latestBuild.category}" 
+                        <a href="${category.link}" 
                            style="color: #ff9a00; text-decoration: none; font-weight: 500;">
-                            👁️ Показать все сборки в категории ${category.name}
+                            👁️ Все билды ${category.name}
                         </a>
                     </div>
                 </div>
