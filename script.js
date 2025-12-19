@@ -110,7 +110,7 @@ function renderBuilds() {
     const container = document.getElementById('buildsContainer');
     if (!container) return;
     
-    const builds = JSON.parse(localStorage.getItem('builds')) || [];
+    const builds = await getBuilds();
     
     if (builds.length === 0) {
         container.innerHTML = `
@@ -204,7 +204,8 @@ function renderCategoryBuilds(category) {
     const container = document.getElementById('buildsContainer');
     if (!container) return;
     
-    const allBuilds = JSON.parse(localStorage.getItem('builds')) || [];
+// СТАЛО:
+const allBuilds = await getBuilds();
     const categoryBuilds = allBuilds.filter(b => b.category === category);
     
     if (categoryBuilds.length === 0) {
