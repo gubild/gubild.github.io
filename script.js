@@ -109,7 +109,8 @@ function createBuild(name, description, items, category, imageURL, videoURL) {
 function renderBuilds() {
     const container = document.getElementById('buildsContainer');
     if (!container) return;
-    
+
+  async function someFunction() {
     const builds = await getBuilds();
     
     if (builds.length === 0) {
