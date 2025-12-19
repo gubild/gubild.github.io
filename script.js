@@ -1,3 +1,24 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDgBZeqSZmZZu68dUxAPDV6s9MbMa3c1IM",
+  authDomain: "albion-builds-9dd65.firebaseapp.com",
+  projectId: "albion-builds-9dd65",
+  storageBucket: "albion-builds-9dd65.firebasestorage.app",
+  messagingSenderId: "1035634542354",
+  appId: "1:1035634542354:web:2d2543302ea25f8333d5cb",
+  measurementId: "G-F95SH9SSGM"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 // ==================== КОНСТАНТЫ ====================
 const SECRET_PASSWORD = "92421lis932"; // Твой пароль
 
