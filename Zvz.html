@@ -2,35 +2,47 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ZvZ | GUBILD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ ZvZ билды - Albion Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #faf5ff;
-            color: #1e293b;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #7c3aed;
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-        a {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background: #3b82f6;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-    </style>
-</head>
-<body>
-    <h1>👥 ZvZ Сборки</h1>
-    <p>Страница в разработке. Скоро здесь появятся сборки для ZvZ.</p>
-    <a href="index.html">← Назад на главную</a>
-</body>
-</html>
-<div id="categoryBuildsContainer"></div>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0d1117; color: #c9d1d9; min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        header { background: linear-gradient(135deg, #161b22 0%, #0d1117 100%); border-radius: 15px; padding: 30px; margin-bottom: 30px; border: 1px solid #30363d; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .logo { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .logo-icon { font-size: 2.5rem; color: #feca57; }
+        h1 { color: #f0f6fc; font-size: 2.2rem; margin-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 20px; }
+        .back-link { color: #58a6ff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background: rgba(88,166,255,0.1); transition: all 0.3s; }
+        .back-link:hover { background: rgba(88,166,255,0.2); transform: translateX(-5px); }
+        
+        .category-info { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        @media (max-width: 768px) { .category-info { grid-template-columns: 1fr; } }
+        .info-card { background: rgba(22,27,34,0.8); border-radius: 12px; padding: 25px; border: 1px solid #30363d; }
+        .info-card h3 { color: #feca57; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .info-card ul { list-style: none; }
+        .info-card li { padding: 8px 0; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 10px; }
+        .info-card li:last-child { border-bottom: none; }
+        
+        .builds-section { background: #161b22; border-radius: 15px; padding: 30px; border: 1px solid #30363d; margin-bottom: 40px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #30363d; }
+        .section-title { color: #f0f6fc; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+        .add-build-btn { background: linear-gradient(135deg, #238636 0%, #2ea043 100%); color: white; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+        .add-build-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(35,134,54,0.3); }
+        
+        .builds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .build-card { background: rgba(22,27,34,0.8); border-radius: 12px; padding: 20px; border: 1px solid #30363d; transition: all 0.3s; border-left: 4px solid #feca57; }
+        .build-card:hover { border-color: #feca57; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(254,202,87,0.1); }
+        .build-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .build-name { color: #f0f6fc; font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
+        .build-date { color: #8b949e; font-size: 0.85rem; }
+        .build-description { color: #8b949e; margin-bottom: 15px; line-height: 1.5; }
+        .build-items { background: rgba(13,17,23,0.5); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .items-title { color: #feca57; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .item-list { list-style: none; }
+        .item-list li { color: #c9d1d9; padding: 5px 0; font-size: 0.9rem; border-bottom: 1px solid #30363d; }
+        .item-list li:last-child { border-bottom: none; }
+        .build-footer { display: flex; justify-content: flex-end; margin-top: 15px; }
+        .build-actions button { background: rgba(248,81,73,0.1); color: #f85149; border: 1px solid #30363d; padding:
