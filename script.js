@@ -45,7 +45,7 @@ async function getBuilds() {
                 });
             }
         });
-        
+         
         console.log("✅ Загружено из Firebase:", allBuilds);
         
         // 2. Сохраняем в localStorage как кэш
@@ -86,8 +86,8 @@ function createBuild(name, description, items, category, imageURL, videoURL) {
         items: items || [],
         category: category || 'pvp',
         imageURL: imageURL || '',
-        videoURL: videoURL || '',
-        createdAt: new Date().toISOString()
+        videoURL: videoURL || 
+          createdAt: new Date().toISOString(),
     };
     
     builds.push(newBuild);
