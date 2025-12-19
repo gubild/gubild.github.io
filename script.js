@@ -14,7 +14,6 @@ function createBuild(name, description, items, category, imageURL, videoURL) {
         items: items || [],
         category: category || 'pvp',
         imageURL: imageURL || '',
-        videoURL: videoURL || '',
         createdAt: new Date().toISOString()
     };
     
