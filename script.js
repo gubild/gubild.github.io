@@ -15,7 +15,58 @@ const firebaseConfig = {
   appId: "1:1035634542354:web:2d2543302ea25f8333d5cb",
   measurementId: "G-F95SH9SSGM"
 };
+// ===== FIREBASE КОНФИГ =====
+// (тут твой конфиг)
 
+// ===== ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ БИЛДОВ =====
+async function getBuilds() {
+    try {
+        console.log("🔄 Загружаю билды из Firebase...");
+        
+        // 1. Пробуем загрузить из Firebase
+        const snapshot = await db.collection("builds").get();
+        const allBuilds = { 
+            pvp: [], 
+            pve: [], 
+            ss: [], 
+            zvz: [],
+            community: [] // Для билдов сообщества
+        };
+        
+        // Сортируем билды по типам
+        snapshot.forEach(doc => {
+            const buildData = doc.data();
+            const type = buildData.type || 'community';
+            
+            if (allBuilds[type]) {
+                allBuilds[type].push({
+                    id: doc.id,
+                    ...buildData
+                });
+            }
+        });
+        
+        console.log("✅ Загружено из Firebase:", allBuilds);
+        
+        // 2. Сохраняем в localStorage как кэш
+        localStorage.setItem('albion_builds', JSON.stringify(allBuilds));
+        
+        return allBuilds;
+        
+    } catch (error) {
+        console.error("❌ Ошибка Firebase:", error);
+        console.log("⚠️ Использую локальные данные...");
+        
+        // 3. Запасной вариант: localStorage
+        const saved = localStorage.getItem('albion_builds');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        
+        // 4. Если совсем ничего нет
+        return { pvp: [], pve: [], ss: [], zvz: [], community: [] };
+    }
+}
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
