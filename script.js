@@ -357,3 +357,34 @@ window.showDeleteModal = showDeleteModal;
 window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;
 window.deleteBuild = deleteBuild;
+function createBuild(name, description, items, category, imageURL, videoURL) {
+    console.log('🛠️ Создаю билд:', name);
+    
+    let builds = JSON.parse(localStorage.getItem('builds')) || [];
+    
+    const newBuild = {
+        id: Date.now(),
+        name: name || 'Без названия',
+        description: description || '',
+        items: items || [],
+        category: category || 'pvp',
+        categoryId: CATEGORIES[category]?.id || 1,
+        imageURL: imageURL || '', // Картинка в base64
+        videoURL: videoURL || '',
+        createdAt: new Date().toISOString()
+    };
+    
+    builds.push(newBuild);
+    localStorage.setItem('builds', JSON.stringify(builds));
+    
+    // Если картинка большая, можно очистить консоль
+    if (imageURL && imageURL.length > 1000) {
+        console.log('Изображение сохранено (base64)');
+    }
+    
+    if (typeof renderBuilds === 'function') {
+        renderBuilds();
+    }
+    
+    return newBuild;
+}
