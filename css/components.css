@@ -377,3 +377,165 @@
         flex-direction: column;
     }
 }
+/* Добавляем в конец components.css */
+
+/* Тёмная тема для компонентов */
+body.dark-theme .builds-switcher {
+    background: #1e293b;
+    border-bottom-color: #334155;
+}
+
+body.dark-theme .switcher-tabs {
+    background: #334155;
+}
+
+body.dark-theme .tab-btn.active {
+    background: #475569;
+    color: var(--purple-light);
+}
+
+body.dark-theme .filter-select,
+body.dark-theme .filter-search {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #475569;
+}
+
+body.dark-theme .filter-group label {
+    color: #cbd5e1;
+}
+
+body.dark-theme .build-card {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-theme .build-card-header {
+    border-bottom-color: #334155;
+}
+
+body.dark-theme .build-title {
+    color: #f1f5f9;
+}
+
+body.dark-theme .equipment-item {
+    color: #94a3b8;
+}
+
+body.dark-theme .equipment-item strong {
+    color: #e2e8f0;
+}
+
+body.dark-theme .form-card {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+body.dark-theme .form-label {
+    color: #cbd5e1;
+}
+
+body.dark-theme .form-input,
+body.dark-theme .form-textarea,
+body.dark-theme .form-select {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-color: #475569;
+}
+
+body.dark-theme .checkbox-group {
+    background: #334155;
+}
+
+body.dark-theme .equipment-category {
+    background: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-theme .equipment-category h3 {
+    color: var(--purple-light);
+}
+
+body.dark-theme .equipment-item-detail {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* Переключатель темы */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 2rem;
+    cursor: pointer;
+}
+
+.theme-toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+}
+
+.theme-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "☀️";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    padding: 2px;
+}
+
+.theme-toggle input:checked + .theme-slider {
+    background-color: var(--primary-purple);
+}
+
+.theme-toggle input:checked + .theme-slider:before {
+    content: "🌙";
+    transform: translateX(24px);
+}
+
+.theme-label {
+    font-size: 0.9rem;
+    color: var(--gray-dark);
+    font-weight: 500;
+}
+
+body.dark-theme .theme-label {
+    color: #cbd5e1;
+}
+
+/* Адаптивность для переключателя */
+@media (max-width: 768px) {
+    .theme-switcher {
+        margin-left: 0;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+}
