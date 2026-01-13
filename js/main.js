@@ -166,3 +166,27 @@ if (typeof window !== 'undefined') {
     window.getPublicBuilds = getPublicBuilds;
     window.CONFIG = CONFIG;
 }
+// Загрузка данных и инициализация
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация темы
+    if (typeof initializeTheme === 'function') {
+        initializeTheme();
+    } else {
+        // Загружаем theme.js если он ещё не загружен
+        loadThemeScript();
+    }
+    
+    // Остальной код...
+});
+
+// Динамическая загрузка theme.js если нужно
+function loadThemeScript() {
+    const script = document.createElement('script');
+    script.src = 'js/theme.js';
+    script.onload = function() {
+        if (typeof initializeTheme === 'function') {
+            initializeTheme();
+        }
+    };
+    document.head.appendChild(script);
+}
