@@ -539,3 +539,23 @@ body.dark-theme .theme-label {
         justify-content: center;
     }
 }
+/* Стили для кнопки удаления */
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* Анимация удаления */
+.build-card {
+    transition: all 0.3s ease;
+}
+
+.build-card.deleting {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
