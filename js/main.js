@@ -90,6 +90,43 @@ function createBuildCard(build, showActions = true) {
             <a href="build-detail.html?id=${build.id}" class="btn btn-outline btn-sm">Подробнее</a>
             ${build.isPublic ? '' : `
             <button class="btn btn-primary btn-sm" onclick="copyBuildToMine('${build.id}')">
+                <i class="fas fa-copy"></i> Копировать
+            </button>
+            `}
+            <!-- КНОПКА УДАЛЕНИЯ (только для моих билдов) -->
+            ${!build.isPublic ? `
+            <button class="btn btn-danger btn-sm" onclick="deleteBuild('${build.id}', this)">
+                <i class="fas fa-trash"></i> Удалить
+            </button>
+            ` : ''}
+        </div>
+        ` : ''}
+    `;
+    
+    return card;
+}
+    
+    const category = CONFIG.CATEGORIES[build.category.toUpperCase()] || CONFIG.CATEGORIES.PVP;
+    
+    card.innerHTML = `
+        <div class="build-card-header">
+            <div class="build-category">${category.icon} ${category.name}</div>
+            <div class="build-date">${formatDate(build.createdAt)}</div>
+        </div>
+        <h3 class="build-title">${escapeHtml(build.title)}</h3>
+        <div class="build-equipment">
+            <div class="equipment-item">
+                <strong>Оружие:</strong> ${escapeHtml(build.equipment.weapon || 'Не указано')}
+            </div>
+            <div class="equipment-item">
+                <strong>Броня:</strong> ${escapeHtml(build.equipment.armor || 'Не указано')}
+            </div>
+        </div>
+        ${showActions ? `
+        <div class="build-card-actions">
+            <a href="build-detail.html?id=${build.id}" class="btn btn-outline btn-sm">Подробнее</a>
+            ${build.isPublic ? '' : `
+            <button class="btn btn-primary btn-sm" onclick="copyBuildToMine('${build.id}')">
                 <i class="fas fa-copy"></i> Копировать себе
             </button>
             `}
