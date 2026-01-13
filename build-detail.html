@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали билда | GuildBuild</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                    <a href="builds.html"><i class="fas fa-list"></i> Все билды</a>
+                    <a href="add-build.html"><i class="fas fa-plus-circle"></i> Добавить билд</a>
+                    
+                    <!-- Переключатель темы -->
+                    <div class="theme-switcher">
+                        <span class="theme-label">Светлая</span>
+                        <label class="theme-toggle">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="theme-slider"></span>
+                        </label>
+                        <span class="theme-label">Тёмная</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Детали билда -->
+    <section class="build-detail">
+        <div class="container">
+            <!-- Заголовок билда -->
+            <div class="detail-header" id="build-header">
+                <div class="detail-category" id="build-category">⚔️ PvP</div>
+                <h1 class="detail-title" id="build-title">Название билда</h1>
+                <div class="detail-meta" id="build-meta">
+                    <span><i class="far fa-calendar"></i> <span id="build-date">Дата добавления</span></span>
+                    <span><i class="fas fa-globe"></i> <span id="build-visibility">Общий билд</span></span>
+                </div>
+            </div>
+            
+            <!-- Снаряжение -->
+            <div class="detail-content">
+                <h2 class="section-subtitle"><i class="fas fa-helmet-battle"></i> Снаряжение</h2>
+                
+                <div class="equipment-detail">
+                    <div class="equipment-category">
+                        <h3><i class="fas fa-swords"></i> Основное</h3>
+                        <div class="equipment-item-detail" id="equipment-weapon">
+                            <strong>Оружие:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                        <div class="equipment-item-detail" id="equipment-helmet">
+                            <strong>Шлем:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                        <div class="equipment-item-detail" id="equipment-armor">
+                            <strong>Броня:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                        <div class="equipment-item-detail" id="equipment-boots">
+                            <strong>Обувь:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-category">
+                        <h3><i class="fas fa-backpack"></i> Дополнительное</h3>
+                        <div class="equipment-item-detail" id="equipment-cape">
+                            <strong>Плащ:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                        <div class="equipment-item-detail" id="equipment-food">
+                            <strong>Еда:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                        <div class="equipment-item-detail" id="equipment-potion">
+                            <strong>Зелья:</strong> <span class="equipment-value">Не указано</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Навыки -->
+                <h2 class="section-subtitle"><i class="fas fa-magic"></i> Навыки</h2>
+                
+                <div class="equipment-detail">
+                    <div class="equipment-category">
+                        <h3><i class="fas fa-bolt"></i> Активные навыки</h3>
+                        <div class="skills-list" id="skills-active">
+                            <!-- Навыки загружаются через JS -->
+                            <div class="equipment-item-detail">Навык 1</div>
+                            <div class="equipment-item-detail">Навык 2</div>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-category">
+                        <h3><i class="fas fa-shield-alt"></i> Пассивные навыки</h3>
+                        <div class="skills-list" id="skills-passive">
+                            <!-- Навыки загружаются через JS -->
+                            <div class="equipment-item-detail">Пассивка 1</div>
+                            <div class="equipment-item-detail">Пассивка 2</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Действия -->
+                <div class="detail-actions">
+                    <button class="btn btn-primary" id="copy-build-btn">
+                        <i class="fas fa-copy"></i> Копировать себе
+                    </button>
+                    <a href="builds.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к списку
+                    </a>
+                    <button class="btn btn-outline" id="edit-build-btn" style="display: none;">
+                        <i class="fas fa-edit"></i> Редактировать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
+                </div>
+                <p>Библиотека билдов Albion Online © <span class="current-year">2024</span></p>
+                <p class="footer-note">Для публикации билда в общий раздел требуется пароль</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/build-detail.js"></script>
+</body>
+</html>
