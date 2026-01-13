@@ -233,3 +233,68 @@ function loadThemeScript() {
     };
     document.head.appendChild(script);
 }
+// Удаление билда
+function deleteBuild(buildId, buttonElement) {
+    if (!confirm('🗑️ Удалить этот билд? Это действие нельзя отменить.')) {
+        return;
+    }
+    
+    // Показываем загрузку
+    if (buttonElement) {
+        const originalHTML = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Удаление...';
+        buttonElement.disabled = true;
+    }
+    
+    try {
+        // Удаляем из "Моих билдов"
+        const myBuilds = getMyBuilds();
+        const updatedBuilds = myBuilds.filter(build => build.id !== buildId);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.MY_BUILDS, JSON.stringify(updatedBuilds));
+        
+        // Если билд был скопирован из общих, удаляем и оттуда
+        const buildToDelete = myBuilds.find(b => b.id === buildId);
+        if (buildToDelete && buildToDelete.originalId) {
+            // Это копия из общих билдов
+            const publicBuilds = getPublicBuilds();
+            const updatedPublic = publicBuilds.filter(b => b.id !== buildToDelete.originalId);
+            localStorage.setItem(CONFIG.STORAGE_KEYS.PUBLIC_BUILDS, JSON.stringify(updatedPublic));
+        }
+        
+        // Удаляем из UI
+        const buildCard = document.querySelector(`.build-card[data-id="${buildId}"]`);
+        if (buildCard) {
+            buildCard.style.opacity = '0.5';
+            setTimeout(() => {
+                buildCard.style.transition = 'all 0.3s';
+                buildCard.style.height = '0';
+                buildCard.style.padding = '0';
+                buildCard.style.margin = '0';
+                buildCard.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    buildCard.remove();
+                    // Обновляем статистику
+                    updateStats();
+                    alert('✅ Билд удалён!');
+                }, 300);
+            }, 100);
+        } else {
+            alert('✅ Билд удалён!');
+            // Если мы на странице билдов, перезагружаем список
+            if (window.location.pathname.includes('builds.html')) {
+                loadBuilds();
+            }
+        }
+        
+    } catch (error) {
+        console.error('Ошибка удаления:', error);
+        alert('❌ Ошибка при удалении билда');
+        
+        // Восстанавливаем кнопку
+        if (buttonElement) {
+            buttonElement.innerHTML = '<i class="fas fa-trash"></i> Удалить';
+            buttonElement.disabled = false;
+        }
+    }
+}
