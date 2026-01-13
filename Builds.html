@@ -1,517 +1,97 @@
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Все билды | GUBILD</title>
-    <style>
-        /* Стили из add-build.html */
-        :root {
-            --primary-blue: #2563eb;
-            --secondary-blue: #3b82f6;
-            --light-blue: #dbeafe;
-            --white: #ffffff;
-            --gray-light: #f8fafc;
-            --overlay-bg: rgba(0, 0, 0, 0.85);
-            --pvp-red: #dc2626;
-            --zvz-purple: #7c3aed;
-            --pve-green: #059669;
-            --ss-orange: #ea580c;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            min-height: 100vh;
-            color: #1e293b;
-            padding: 20px;
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        .header { text-align: center; margin-bottom: 40px; }
-        
-        .logo {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-        
-        .nav { text-align: center; margin: 40px 0; }
-        
-        .nav a {
-            display: inline-block;
-            padding: 12px 24px;
-            background: var(--white);
-            color: var(--primary-blue);
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            margin: 0 10px;
-            border: 2px solid var(--light-blue);
-            transition: all 0.3s ease;
-        }
-        
-        .nav a:hover {
-            background: var(--light-blue);
-            transform: translateY(-2px);
-        }
-        
-        .gallery { margin-top: 50px; }
-        
-        .gallery-title {
-            font-size: 1.8rem;
-            color: var(--primary-blue);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .categories-filter {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 20px;
-            border: 2px solid #d1d5db;
-            background: var(--white);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .filter-btn.active {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
-        
-        .filter-btn.pvp:hover { background: #fee2e2; border-color: var(--pvp-red); }
-        .filter-btn.zvz:hover { background: #f3e8ff; border-color: var(--zvz-purple); }
-        .filter-btn.pve:hover { background: #d1fae5; border-color: var(--pve-green); }
-        .filter-btn.ss:hover { background: #ffedd5; border-color: var(--ss-orange); }
-        
-        .builds-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        
-        .build-card {
-            background: var(--white);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        
-        .build-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .build-card.pvp { border-color: var(--pvp-red); }
-        .build-card.zvz { border-color: var(--zvz-purple); }
-        .build-card.pve { border-color: var(--pve-green); }
-        .build-card.ss { border-color: var(--ss-orange); }
-        
-        .build-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--light-blue);
-        }
-        
-        .build-info { padding: 20px; }
-        
-        .build-category {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .build-category.pvp { background: #fee2e2; color: #991b1b; }
-        .build-category.zvz { background: #f3e8ff; color: #5b21b6; }
-        .build-category.pve { background: #d1fae5; color: #047857; }
-        .build-category.ss { background: #ffedd5; color: #c2410c; }
-        
-        .build-name {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #1e293b;
-        }
-        
-        .build-meta {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 15px;
-        }
-        
-        .build-author {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 15px;
-            margin-top: 15px;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: var(--white);
-            border-radius: 20px;
-            border: 2px dashed var(--light-blue);
-        }
-        
-        .empty-icon {
-            font-size: 4rem;
-            color: #d1d5db;
-            margin-bottom: 20px;
-        }
-        
-        .empty-title {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-        }
-        
-        .empty-text {
-            color: #6b7280;
-            margin-bottom: 30px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .btn-primary {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-        }
-    </style>
+    <title>Все билды | GuildBuild</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Навигация -->
-        <div class="nav">
-            <a href="index.html">← На главную</a>
-            <a href="add-build.html">➕ Добавить билд</a>
-        </div>
-
-        <!-- Заголовок -->
-        <div class="header">
-            <h1 class="logo">Все билды GUBILD</h1>
-            <p style="color: #64748b;">Просмотр всех созданных сборок</p>
-        </div>
-
-        <!-- Фильтры -->
-        <div class="categories-filter" id="filters">
-            <button class="filter-btn active" data-category="all">Все билды</button>
-            <button class="filter-btn pvp" data-category="pvp">PvP</button>
-            <button class="filter-btn zvz" data-category="zvz">ZvZ</button>
-            <button class="filter-btn pve" data-category="pve">PvE</button>
-            <button class="filter-btn ss" data-category="ss">Смолскейл</button>
-        </div>
-
-        <!-- Галерея билдов -->
-        <div class="gallery">
-            <h2 class="gallery-title" id="gallery-title">🎮 Все билды</h2>
-            <div class="builds-grid" id="builds-container">
-                <!-- Билды будут загружены сюда -->
-            </div>
-            
-            <!-- Состояние "нет билдов" -->
-            <div class="empty-state" id="empty-state" style="display: none;">
-                <div class="empty-icon">📭</div>
-                <h3 class="empty-title">Билды не найдены</h3>
-                <p class="empty-text">
-                    Пока не добавлено ни одного билда. Будьте первым, кто создаст сборку для гильдии!
-                </p>
-                <a href="add-build.html" class="btn-primary">➕ Создать первый билд</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Загружаем билды
-        let builds = JSON.parse(localStorage.getItem('gubild-builds')) || [];
-        let currentCategory = 'all';
-        
-        // Названия категорий
-        const categoryNames = {
-            'pvp': 'PvP',
-            'zvz': 'ZvZ', 
-            'pve': 'PvE',
-            'ss': 'Смолскейл'
-        };
-        
-        // Загрузка при старте
-        document.addEventListener('DOMContentLoaded', function() {
-            loadBuilds();
-            setupFilters();
-            updateTitle();
-        });
-        
-        // Загрузка билдов
-        function loadBuilds() {
-            const buildsContainer = document.getElementById('builds-container');
-            const emptyState = document.getElementById('empty-state');
-            
-            // Фильтруем по категории
-            const filteredBuilds = currentCategory === 'all' 
-                ? builds 
-                : builds.filter(b => b.category === currentCategory);
-            
-            // Если нет билдов
-            if (filteredBuilds.length === 0) {
-                buildsContainer.innerHTML = '';
-                emptyState.style.display = 'block';
-                return;
-            }
-            
-            // Скрываем пустое состояние
-            emptyState.style.display = 'none';
-            
-            // Очищаем контейнер
-            buildsContainer.innerHTML = '';
-            
-            // Сортируем по дате (новые сначала)
-            const sortedBuilds = filteredBuilds.sort((a, b) => b.id - a.id);
-            
-            // Добавляем билды
-            sortedBuilds.forEach(build => {
-                const buildCard = document.createElement('div');
-                buildCard.className = `build-card ${build.category}`;
-                buildCard.dataset.id = build.id;
-                
-                buildCard.innerHTML = `
-                    <img src="${build.image}" alt="${build.name}" class="build-image" 
-                         onclick="showBuildDetails(${build.id})">
-                    <div class="build-info" onclick="showBuildDetails(${build.id})">
-                        <span class="build-category ${build.category}">${categoryNames[build.category]}</span>
-                        <h3 class="build-name">${build.name}</h3>
-                        <div class="build-meta">
-                            <span>🗡️ ${build.mainWeapon} ${build.weaponTier}</span>
-                            <span>👤 ${build.author}</span>
-                        </div>
-                        <div class="build-author">
-                            Добавлен: ${build.date}
-                        </div>
-                    </div>
-                `;
-                
-                buildsContainer.appendChild(buildCard);
-            });
-        }
-        
-        // Настройка фильтров
-        function setupFilters() {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Убираем активный класс у всех
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    
-                    // Добавляем активный класс текущей
-                    this.classList.add('active');
-                    
-                    // Обновляем категорию
-                    currentCategory = this.dataset.category;
-                    
-                    // Перезагружаем билды
-                    loadBuilds();
-                    updateTitle();
-                });
-            });
-        }
-        
-        // Обновление заголовка
-        function updateTitle() {
-            const title = document.getElementById('gallery-title');
-            const count = currentCategory === 'all' 
-                ? builds.length 
-                : builds.filter(b => b.category === currentCategory).length;
-            
-            const categoryText = currentCategory === 'all' 
-                ? 'Все билды' 
-                : `${categoryNames[currentCategory]} билды`;
-            
-            title.textContent = `${categoryText} (${count})`;
-        }
-        
-        // Показать детали билда
-        function showBuildDetails(id) {
-            const build = builds.find(b => b.id === id);
-            if (!build) return;
-            
-            // Создаем модальное окно
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.85);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                animation: fadeIn 0.3s ease;
-            `;
-            
-            modal.innerHTML = `
-                <div style="
-                    background: white;
-                    border-radius: 20px;
-                    padding: 40px;
-                    width: 90%;
-                    max-width: 800px;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    position: relative;
-                    animation: slideUp 0.4s ease;
-                ">
-                    <button onclick="this.parentElement.parentElement.remove()" 
-                            style="
-                                position: absolute;
-                                top: 15px;
-                                right: 15px;
-                                background: none;
-                                border: none;
-                                font-size: 1.5rem;
-                                color: #6b7280;
-                                cursor: pointer;
-                                padding: 5px;
-                                width: 40px;
-                                height: 40px;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                            ">
-                        ×
-                    </button>
-                    
-                    <h2 style="font-size: 2rem; color: #2563eb; margin-bottom: 20px;">
-                        ${build.name}
-                    </h2>
-                    
-                    <div style="display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 600; margin-bottom: 20px; 
-                          ${build.category === 'pvp' ? 'background: #fee2e2; color: #991b1b;' : ''}
-                          ${build.category === 'zvz' ? 'background: #f3e8ff; color: #5b21b6;' : ''}
-                          ${build.category === 'pve' ? 'background: #d1fae5; color: #047857;' : ''}
-                          ${build.category === 'ss' ? 'background: #ffedd5; color: #c2410c;' : ''}">
-                        ${categoryNames[build.category]}
-                    </div>
-                    
-                    <img src="${build.image}" alt="${build.name}" 
-                         style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 30px 0;">
-                        <!-- Оружие -->
-                        <div style="background: #f8fafc; border-radius: 15px; padding: 25px;">
-                            <h3 style="color: #2563eb; margin-bottom: 15px; font-size: 1.3rem;">🗡️ Оружие</h3>
-                            <ul style="list-style: none;">
-                                <li style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">🗡️</span>
-                                    <div>
-                                        <div style="font-weight: 500;">${build.mainWeapon} ${build.weaponTier}</div>
-                                        <div style="color: #6b7280; font-size: 0.9rem;">Пассивка: ${build.weaponPassive}</div>
-                                    </div>
-                                </li>
-                                <li style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">Q</span>
-                                    <div style="font-weight: 500;">${build.skills.q}</div>
-                                </li>
-                                <li style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">W</span>
-                                    <div style="font-weight: 500;">${build.skills.w}</div>
-                                </li>
-                                <li style="padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">E</span>
-                                    <div style="font-weight: 500;">${build.skills.e}</div>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Броня -->
-                        <div style="background: #f8fafc; border-radius: 15px; padding: 25px;">
-                            <h3 style="color: #2563eb; margin-bottom: 15px; font-size: 1.3rem;">🧥 Броня</h3>
-                            <ul style="list-style: none;">
-                                <li style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">⛑️</span>
-                                    <div>
-                                        <div style="font-weight: 500;">${build.armor.head}</div>
-                                        <div style="color: #6b7280; font-size: 0.9rem;">${build.armor.headSkill} / ${build.armor.headPassive}</div>
-                                    </div>
-                                </li>
-                                <li style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">🧥</span>
-                                    <div>
-                                        <div style="font-weight: 500;">${build.armor.body}</div>
-                                        <div style="color: #6b7280; font-size: 0.9rem;">${build.armor.bodySkill} / ${build.armor.bodyPassive}</div>
-                                    </div>
-                                </li>
-                                <li style="padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 30px; height: 30px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2563eb;">👟</span>
-                                    <div>
-                                        <div style="font-weight: 500;">${build.armor.shoes}</div>
-                                        <div style="color: #6b7280; font-size: 0.9rem;">${build.armor.shoesSkill} / ${build.armor.shoesPassive}</div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Описание -->
-                    ${build.description ? `
-                    <div style="background: #f8fafc; border-radius: 15px; padding: 25px; margin-top: 20px;">
-                        <h3 style="color: #2563eb; margin-bottom: 15px; font-size: 1.3rem;">📝 Описание</h3>
-                        <p>${build.description}</p>
-                    </div>
-                    ` : ''}
-                    
-                    <div style="text-align: center; margin-top: 30px; color: #6b7280; font-size: 0.9rem;">
-                        Добавлен: ${build.date} | Автор: ${build.author}
-                    </div>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
                 </div>
-            `;
+                <div class="nav-links">
+                    <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                    <a href="builds.html" class="active"><i class="fas fa-list"></i> Все билды</a>
+                    <a href="add-build.html"><i class="fas fa-plus-circle"></i> Добавить билд</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Переключатель разделов -->
+    <section class="builds-switcher">
+        <div class="container">
+            <div class="switcher-tabs">
+                <button class="tab-btn active" data-tab="my">📁 Мои билды</button>
+                <button class="tab-btn" data-tab="public">🌍 Общие билды</button>
+            </div>
             
-            document.body.appendChild(modal);
-        }
-    </script>
+            <!-- Фильтры -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="category-filter"><i class="fas fa-filter"></i> Категория:</label>
+                    <select id="category-filter" class="filter-select">
+                        <option value="all">Все категории</option>
+                        <option value="pvp">⚔️ PvP</option>
+                        <option value="pve">🐉 PvE</option>
+                        <option value="zvz">⚡ ZvZ</option>
+                        <option value="smallscale">👥 Small Scale</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="search-input"><i class="fas fa-search"></i> Поиск:</label>
+                    <input type="text" id="search-input" class="filter-search" placeholder="По названию или предмету...">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Список билдов -->
+    <section class="builds-list-section">
+        <div class="container">
+            <div id="builds-container" class="builds-container">
+                <!-- Билды загружаются через JavaScript -->
+                <div class="empty-state">
+                    <i class="fas fa-book"></i>
+                    <p id="empty-message">Нет билдов в этом разделе</p>
+                    <a href="add-build.html" class="btn btn-outline">Добавить первый билд</a>
+                </div>
+            </div>
+            
+            <!-- Информация о пароле -->
+            <div class="password-info">
+                <i class="fas fa-key"></i>
+                <p>Для публикации билда в <strong>Общие билды</strong> требуется админ-пароль</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
+                </div>
+                <p>Библиотека билдов Albion Online © <span class="current-year">2024</span></p>
+                <p class="footer-note">Для публикации билда в общий раздел требуется пароль</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/builds.js"></script>
 </body>
 </html>
