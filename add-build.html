@@ -1,590 +1,178 @@
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 Создать новый билд - Albion Online</title>
+    <title>Добавить билд | GuildBuild</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #0d1117; color: #c9d1d9; min-height: 100vh; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1000px; margin: 0 auto; background: #161b22; border-radius: 15px; padding: 30px; border: 1px solid #30363d; }
-        
-        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #4cc9f0; }
-        .header h1 { color: #4cc9f0; font-size: 2.5rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .back-link { color: #58a6ff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background: rgba(88,166,255,0.1); transition: all 0.3s; }
-        .back-link:hover { background: rgba(88,166,255,0.2); transform: translateX(-5px); }
-        
-        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #3a3a5d; padding-bottom: 10px; }
-        .tab-btn { padding: 12px 25px; background: rgba(60,60,80,0.5); border: none; border-radius: 10px 10px 0 0; color: #a9b7c6; cursor: pointer; transition: all 0.3s; font-size: 1rem; }
-        .tab-btn.active { background: #4cc9f0; color: #1a1a2e; font-weight: bold; }
-        .tab-btn:hover:not(.active) { background: rgba(76,201,240,0.3); }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
-        
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
-        
-        .form-section { background: rgba(40,40,60,0.7); border-radius: 15px; padding: 25px; border: 1px solid #3a3a5d; }
-        .section-title { display: flex; align-items: center; gap: 10px; color: #72efdd; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #4a4a6d; font-size: 1.3rem; }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #b8c1ec; font-weight: 500; }
-        input, textarea, select { width: 100%; padding: 12px 15px; background: rgba(30,30,46,0.8); border: 1px solid #4a4a6d; border-radius: 10px; color: #f0f0f0; font-size: 1rem; transition: all 0.3s; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: #4cc9f0; box-shadow: 0 0 0 2px rgba(76,201,240,0.2); }
-        
-        /* СТИЛИ ДЛЯ ЗАГРУЗКИ КАРТИНКИ */
-        .image-upload-container { margin-top: 20px; }
-        .image-upload-label { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; border: 2px dashed #4a4a6d; border-radius: 10px; cursor: pointer; transition: all 0.3s; text-align: center; }
-        .image-upload-label:hover { border-color: #4cc9f0; background: rgba(76,201,240,0.05); }
-        .image-upload-icon { font-size: 3rem; color: #4cc9f0; margin-bottom: 15px; }
-        .image-preview { margin-top: 20px; max-width: 300px; border-radius: 10px; display: none; border: 2px solid #4cc9f0; }
-        .image-preview img { width: 100%; height: auto; border-radius: 8px; }
-        
-        .gear-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .gear-item { background: rgba(30,30,46,0.8); border-radius: 10px; padding: 15px; border: 1px solid #4a3a5d; transition: all 0.3s; }
-        .gear-item:hover { border-color: #4cc9f0; transform: translateY(-3px); }
-        
-        .skill-row { display: flex; gap: 10px; margin-top: 10px; }
-        .skill-row input { margin-bottom: 8px; }
-        
-        .submit-btn { grid-column: 1 / -1; text-align: center; margin-top: 30px; }
-        button[type="submit"] { background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%); color: white; border: none; padding: 18px 40px; font-size: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s; font-weight: bold; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(67,97,238,0.4); }
-        button[type="submit"]:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(67,97,238,0.6); }
-        
-        .notification { position: fixed; top: 20px; right: 20px; background: #2ecc71; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; z-index: 1000; animation: slideIn 0.3s ease; }
-        .notification.error { background: #e74c3c; }
-        
-        .consumables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        /* МОДАЛЬНОЕ ОКНО */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; animation: fadeIn 0.3s ease; }
-        .confirm-modal { background: #161b22; border-radius: 15px; padding: 30px; width: 90%; max-width: 500px; border: 2px solid #4cc9f0; box-shadow: 0 15px 40px rgba(0,0,0,0.5); animation: slideUp 0.4s ease; }
-        .modal-header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #30363d; }
-        .modal-header h3 { color: #4cc9f0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .modal-body { margin-bottom: 25px; }
-        .modal-body p { color: #8b949e; margin-bottom: 20px; text-align: center; }
-        .password-input-group { margin-bottom: 20px; }
-        .password-input-group label { display: block; margin-bottom: 8px; color: #b8c1ec; font-weight: 500; }
-        .password-input-group input { width: 100%; padding: 12px 15px; background: rgba(30,30,46,0.8); border: 1px solid #4a4a6d; border-radius: 10px; color: #f0f0f0; font-size: 1rem; }
-        .password-input-group input:focus { outline: none; border-color: #4cc9f0; box-shadow: 0 0 0 2px rgba(76,201,240,0.2); }
-        .modal-footer { display: flex; gap: 15px; justify-content: center; }
-        .modal-btn { padding: 12px 30px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-        .modal-btn.confirm { background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%); color: white; }
-        .modal-btn.cancel { background: rgba(248,81,73,0.1); color: #f85149; border: 1px solid #30363d; }
-        .modal-btn:hover { transform: translateY(-2px); }
-        .modal-btn.confirm:hover { box-shadow: 0 5px 15px rgba(67,97,238,0.4); }
-        .modal-btn.cancel:hover { background: rgba(248,81,73,0.2); border-color: #f85149; }
-        #passwordError { color: #f85149; font-size: 0.85rem; margin-top: 5px; display: none; }
-        
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-hammer"></i> Конструктор билдов</h1>
-            <p>Создайте идеальный набор для любого типа контента Albion Online</p>
-            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Вернуться на главную</a>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                    <a href="builds.html"><i class="fas fa-list"></i> Все билды</a>
+                    <a href="add-build.html" class="active"><i class="fas fa-plus-circle"></i> Добавить билд</a>
+                </div>
+            </nav>
         </div>
+    </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="basic">📋 Основное</button>
-            <button class="tab-btn" data-tab="gear">⚔️ Экипировка</button>
-            <button class="tab-btn" data-tab="consumables">🧪 Расходники</button>
-        </div>
-
-        <form id="buildForm">
-            <!-- ВКЛАДКА 1: Основная информация -->
-            <div id="tab-basic" class="tab-content active">
-                <div class="form-grid">
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-info-circle"></i> Основная информация</h2>
+    <!-- Форма добавления -->
+    <section class="form-section">
+        <div class="container">
+            <h1 class="section-title">Добавить новый билд</h1>
+            
+            <!-- Сообщения об успехе/ошибке -->
+            <div id="success-alert" class="alert alert-success" style="display: none;">
+                <i class="fas fa-check-circle"></i> Билд успешно сохранён!
+            </div>
+            
+            <div id="error-alert" class="alert alert-error" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i> <span id="error-message"></span>
+            </div>
+            
+            <!-- Форма -->
+            <div class="form-card">
+                <form id="add-build-form">
+                    <!-- Основная информация -->
+                    <div class="form-group">
+                        <label for="build-title" class="form-label required">Название билда</label>
+                        <input type="text" id="build-title" class="form-input" 
+                               placeholder="Например: PvP Frost Mage" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="build-category" class="form-label required">Категория</label>
+                        <select id="build-category" class="form-select" required>
+                            <option value="">Выберите категорию</option>
+                            <option value="pvp">⚔️ Player vs Player (PvP)</option>
+                            <option value="pve">🐉 Player vs Environment (PvE)</option>
+                            <option value="zvz">⚡ Zerg vs Zerg (ZvZ)</option>
+                            <option value="smallscale">👥 Small Scale</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Снаряжение -->
+                    <h2 class="section-subtitle">Снаряжение</h2>
+                    
+                    <div class="equipment-grid">
                         <div class="form-group">
-                            <label for="buildName"><i class="fas fa-tag"></i> Название билда *</label>
-                            <input type="text" id="buildName" placeholder="Например: 'ЗвЗ Копейщик'" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="buildCategory"><i class="fas fa-filter"></i> Категория *</label>
-                            <select id="buildCategory" required>
-                                <option value="">-- Выберите категорию --</option>
-                                <option value="pvp">⚔️ ПВП</option>
-                                <option value="pve">🐉 ПВЕ</option>
-                                <option value="zvz">⚡ ZvZ</option>
-                                <option value="smallscale">👥 Смолскейл</option>
-                            </select>
+                            <label for="equipment-weapon" class="form-label required">Оружие</label>
+                            <input type="text" id="equipment-weapon" class="form-input" 
+                                   placeholder="Например: Пламенный посох" required>
                         </div>
                         
-                        <!-- НОВОЕ: ПОЛЕ ДЛЯ КАРТИНКИ -->
-                        <div class="form-group image-upload-container">
-                            <label><i class="fas fa-image"></i> Изображение билда (опционально)</label>
-                            <div class="image-upload-label" id="imageUploadLabel">
-                                <div class="image-upload-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                </div>
-                                <p>Нажмите для загрузки изображения</p>
-                                <p style="font-size: 0.9rem; color: #8b949e; margin-top: 10px;">
-                                    Максимальный размер: 2MB<br>
-                                    Форматы: JPG, PNG, GIF
-                                </p>
-                                <input type="file" id="buildImage" accept="image/*" style="display: none;">
-                            </div>
-                            <div class="image-preview" id="imagePreview">
-                                <img id="previewImage" src="" alt="Предпросмотр">
-                                <button type="button" id="removeImage" style="margin-top: 10px; background: #f85149; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-                                    <i class="fas fa-trash"></i> Удалить изображение
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-file-alt"></i> Описание</h2>
                         <div class="form-group">
-                            <label for="buildDescription"><i class="fas fa-scroll"></i> Описание тактики</label>
-                            <textarea id="buildDescription" placeholder="Опишите тактику использования..." rows="8"></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="submit-btn">
-                    <button type="button" class="tab-next" data-next="gear">Далее: Экипировка →</button>
-                </div>
-            </div>
-
-            <!-- ВКЛАДКА 2: Экипировка -->
-            <div id="tab-gear" class="tab-content">
-                <div class="form-grid">
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-sword"></i> Оружие</h2>
-                        <div class="gear-item">
-                            <label><i class="fas fa-crosshairs"></i> Тип оружия *</label>
-                            <input type="text" id="weaponType" placeholder="Например: Секира, Лук, Посох" required>
-                            
-                            <div class="skill-row">
-                                <div style="flex: 1;"><label>Скилл 1 (Q)</label><input type="text" id="weaponSkill1" placeholder="Основной скилл"></div>
-                                <div style="flex: 1;"><label>Скилл 2 (W)</label><input type="text" id="weaponSkill2" placeholder="Вторичный скилл"></div>
-                            </div>
-                            
-                            <div style="margin-top: 15px;"><label><i class="fas fa-star"></i> Пассивка оружия</label><input type="text" id="weaponPassive" placeholder="Например: Кровопускание"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-helmet-battle"></i> Броня</h2>
-                        <div class="gear-grid">
-                            <div class="gear-item">
-                                <label><i class="fas fa-hat-cowboy"></i> Шлем</label>
-                                <input type="text" id="helmet" placeholder="Тип шлема">
-                                <input type="text" id="helmetSkill" placeholder="Скилл шлема (F)" style="margin-top: 10px;">
-                                <input type="text" id="helmetPassive" placeholder="Пассивка шлема" style="margin-top: 10px;">
-                            </div>
-                            
-                            <div class="gear-item">
-                                <label><i class="fas fa-vest"></i> Нагрудник</label>
-                                <input type="text" id="chest" placeholder="Тип нагрудника">
-                                <input type="text" id="chestSkill" placeholder="Скилл нагрудника" style="margin-top: 10px;">
-                                <input type="text" id="chestPassive" placeholder="Пассивка нагрудника" style="margin-top: 10px;">
-                            </div>
-                            
-                            <div class="gear-item">
-                                <label><i class="fas fa-boot"></i> Обувь</label>
-                                <input type="text" id="boots" placeholder="Тип обуви">
-                                <input type="text" id="bootsSkill" placeholder="Скилл обуви" style="margin-top: 10px;">
-                                <input type="text" id="bootsPassive" placeholder="Пассивка обуви" style="margin-top: 10px;">
-                            </div>
+                            <label for="equipment-helmet" class="form-label required">Шлем</label>
+                            <input type="text" id="equipment-helmet" class="form-input" 
+                                   placeholder="Например: Капюшон мага" required>
                         </div>
                         
-                        <div style="margin-top: 20px;">
-                            <label><i class="fas fa-hat-wizard"></i> Плащ</label>
-                            <select id="cloak">
-                                <option value="">Без плаща</option>
-                                <option value="normal">Обычный плащ</option>
-                                <option value="invis">Плащ невидимости</option>
-                                <option value="hellion">Плащ Хелиона</option>
-                                <option value="keeper">Плащ Хранителя</option>
-                                <option value="martlock">Плащ Мартлока</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="submit-btn">
-                    <button type="button" class="tab-prev" data-prev="basic">← Назад</button>
-                    <button type="button" class="tab-next" data-next="consumables">Далее: Расходники →</button>
-                </div>
-            </div>
-
-            <!-- ВКЛАДКА 3: Расходники -->
-            <div id="tab-consumables" class="tab-content">
-                <div class="form-grid">
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-utensils"></i> Еда и зелья</h2>
-                        <div class="consumables-grid">
-                            <div class="gear-item">
-                                <label><i class="fas fa-apple-alt"></i> Еда *</label>
-                                <select id="food" required>
-                                    <option value="">-- Выберите еду --</option>
-                                    <option value="beef">🥩 Жареная говядина (+HP)</option>
-                                    <option value="fish">🐟 Жареная рыба (+MP)</option>
-                                    <option value="chicken">🍗 Жареный цыпленок</option>
-                                    <option value="pork">🥓 Жареная свинина</option>
-                                    <option value="sandwich">🥪 Сэндвич</option>
-                                    <option value="salad">🥗 Салат</option>
-                                    <option value="stew">🍲 Рагу</option>
-                                </select>
-                            </div>
-                            
-                            <div class="gear-item">
-                                <label><i class="fas fa-flask"></i> Зелье *</label>
-                                <select id="potion" required>
-                                    <option value="">-- Выберите зелье --</option>
-                                    <option value="healing">❤️ Зелье лечения</option>
-                                    <option value="energy">💙 Зелье энергии</option>
-                                    <option value="resist">🛡️ Зелье сопротивления</option>
-                                    <option value="gigantify">👤 Зелье гиганта</option>
-                                    <option value="invis">👻 Зелье невидимости</option>
-                                    <option value="poison">☠️ Зелье яда</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="equipment-armor" class="form-label required">Броня</label>
+                            <input type="text" id="equipment-armor" class="form-input" 
+                                   placeholder="Например: Мантия учёного" required>
                         </div>
                         
-                        <div style="margin-top: 20px;">
-                            <label><i class="fas fa-horse"></i> Транспорт</label>
-                            <input type="text" id="mount" placeholder="Например: Боевой конь, Жнец">
+                        <div class="form-group">
+                            <label for="equipment-boots" class="form-label required">Обувь</label>
+                            <input type="text" id="equipment-boots" class="form-input" 
+                                   placeholder="Например: Сапоги стражника" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment-cape" class="form-label">Плащ</label>
+                            <input type="text" id="equipment-cape" class="form-input" 
+                                   placeholder="Например: Плащ адепта (опционально)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment-food" class="form-label">Еда</label>
+                            <input type="text" id="equipment-food" class="form-input" 
+                                   placeholder="Например: Тушёная свинина">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment-potion" class="form-label">Зелья</label>
+                            <input type="text" id="equipment-potion" class="form-input" 
+                                   placeholder="Например: Зелье сопротивления">
                         </div>
                     </div>
                     
-                    <div class="form-section">
-                        <h2 class="section-title"><i class="fas fa-cogs"></i> Дополнительные настройки</h2>
+                    <!-- Навыки -->
+                    <div class="form-group">
+                        <label for="skills-active" class="form-label required">Навыки (активные)</label>
+                        <textarea id="skills-active" class="form-textarea" 
+                                  placeholder="Укажите активные навыки, каждый с новой строки"
+                                  required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="skills-passive" class="form-label required">Навыки (пассивные)</label>
+                        <textarea id="skills-passive" class="form-textarea" 
+                                  placeholder="Укажите пассивные навыки, каждый с новой строки"
+                                  required></textarea>
+                    </div>
+                    
+                    <!-- Публикация -->
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="make-public">
+                        <label for="make-public" class="form-label">
+                            <strong>Опубликовать для всех</strong>
+                            <small> (Билд будет виден всем пользователям)</small>
+                        </label>
+                    </div>
+                    
+                    <!-- Поле для пароля (скрыто по умолчанию) -->
+                    <div id="password-field" class="password-field" style="display: none;">
                         <div class="form-group">
-                            <label><i class="fas fa-bullseye"></i> IP (Item Power)</label>
-                            <input type="number" id="ipLevel" placeholder="Пример: 1200" min="800" max="2000">
+                            <label for="admin-password" class="form-label required">Админ-пароль</label>
+                            <input type="password" id="admin-password" class="form-input" 
+                                   placeholder="Введите пароль для публикации">
+                            <small class="form-hint">Требуется для публикации в общий раздел</small>
                         </div>
                     </div>
-                </div>
-                
-                <div class="submit-btn">
-                    <button type="button" class="tab-prev" data-prev="gear">← Назад</button>
-                    <button type="submit" id="submitBtn"><i class="fas fa-check-circle"></i> СОЗДАТЬ БИЛД</button>
-                </div>
-            </div>
-        </form>
-
-        <div id="notification" class="notification"></div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО -->
-    <div id="confirmModal" class="modal-overlay">
-        <div class="confirm-modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-shield-alt"></i> Подтверждение создания билда</h3>
-            </div>
-            
-            <div class="modal-body">
-                <p>Вы уверены, что хотите создать этот билд?</p>
-                <p style="font-size: 0.9rem; color: #6e7681;">Введите секретный пароль для подтверждения:</p>
-                
-                <div class="password-input-group">
-                    <label for="modalPassword"><i class="fas fa-key"></i> Пароль подтверждения</label>
-                    <input type="password" id="modalPassword" placeholder="Введите ваш пароль">
-                    <div id="passwordError"><i class="fas fa-exclamation-circle"></i> Неверный пароль!</div>
-                </div>
-            </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="modal-btn cancel" id="cancelBtn"><i class="fas fa-times"></i> Отмена</button>
-                <button type="button" class="modal-btn confirm" id="confirmBtn"><i class="fas fa-check"></i> Подтвердить</button>
+                    
+                    <!-- Кнопки -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить билд
+                        </button>
+                        <a href="builds.html" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ============ ЗАГРУЗКА КАРТИНКИ ============
-            const imageUploadLabel = document.getElementById('imageUploadLabel');
-            const buildImageInput = document.getElementById('buildImage');
-            const imagePreview = document.getElementById('imagePreview');
-            const previewImage = document.getElementById('previewImage');
-            const removeImageBtn = document.getElementById('removeImage');
-            let imageBase64 = ''; // Здесь будет храниться картинка в base64
-            
-            // Клик на область загрузки
-            imageUploadLabel.addEventListener('click', function() {
-                buildImageInput.click();
-            });
-            
-            // Загрузка файла
-            buildImageInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                // Проверка размера (макс 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    showNotification("Изображение слишком большое! Максимум 2MB.", false);
-                    return;
-                }
-                
-                // Проверка типа
-                if (!file.type.match('image.*')) {
-                    showNotification("Выберите файл изображения (JPG, PNG, GIF)", false);
-                    return;
-                }
-                
-                // Конвертируем в base64
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imageBase64 = event.target.result;
-                    previewImage.src = imageBase64;
-                    imagePreview.style.display = 'block';
-                    showNotification("Изображение загружено!", true);
-                };
-                reader.readAsDataURL(file);
-            });
-            
-            // Удаление картинки
-            removeImageBtn.addEventListener('click', function() {
-                imageBase64 = '';
-                previewImage.src = '';
-                imagePreview.style.display = 'none';
-                buildImageInput.value = '';
-                showNotification("Изображение удалено", false);
-            });
-            
-            // ============ ТАБЫ ============
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById(`tab-${tabId}`).classList.add('active');
-                });
-            });
-            
-            document.querySelectorAll('.tab-next').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const nextTab = this.getAttribute('data-next');
-                    document.querySelector(`[data-tab="${nextTab}"]`).click();
-                });
-            });
-            
-            document.querySelectorAll('.tab-prev').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const prevTab = this.getAttribute('data-prev');
-                    document.querySelector(`[data-tab="${prevTab}"]`).click();
-                });
-            });
-            
-            // ============ МОДАЛЬНОЕ ОКНО ============
-            let currentFormData = null;
-            const modal = document.getElementById('confirmModal');
-            const passwordInput = document.getElementById('modalPassword');
-            const errorElement = document.getElementById('passwordError');
-            
-            // Показать окно
-            window.showConfirmModal = function(data) {
-                currentFormData = data;
-                if (modal && passwordInput) {
-                    passwordInput.value = '';
-                    errorElement.style.display = 'none';
-                    passwordInput.style.borderColor = '#4a4a6d';
-                    modal.style.display = 'flex';
-                    passwordInput.focus();
-                }
-            };
-            
-            // Закрыть по клику на фон
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                    showNotification("Отменено", false);
-                }
-            });
-            
-            // Кнопка отмены
-            document.getElementById('cancelBtn').addEventListener('click', function() {
-                modal.style.display = 'none';
-                showNotification("Создание билда отменено", false);
-            });
-            
-            // Кнопка подтверждения
-            document.getElementById('confirmBtn').addEventListener('click', function() {
-                if (!passwordInput.value.trim()) {
-                    errorElement.textContent = "Введите пароль!";
-                    errorElement.style.display = 'block';
-                    passwordInput.style.borderColor = '#f85149';
-                    passwordInput.focus();
-                    return;
-                }
-                
-                // ТВОЙ ПАРОЛЬ ЗДЕСЬ! ЗАМЕНИ "secret123" на свой
-                const SECRET_PASSWORD = "secret123";
-                
-                if (passwordInput.value !== SECRET_PASSWORD) {
-                    errorElement.textContent = "Неверный пароль!";
-                    errorElement.style.display = 'block';
-                    passwordInput.style.borderColor = '#f85149';
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                    return;
-                }
-                
-                // Пароль верный - создаем
-                createBuildFromData();
-                modal.style.display = 'none';
-            });
-            
-            // Enter в поле пароля
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('confirmBtn').click();
-                }
-            });
-            
-            // ============ ФОРМА ============
-            document.getElementById('buildForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = {
-                    name: document.getElementById('buildName').value.trim(),
-                    category: document.getElementById('buildCategory').value,
-                    description: document.getElementById('buildDescription').value.trim(),
-                    weapon: document.getElementById('weaponType').value.trim(),
-                    weaponSkill1: document.getElementById('weaponSkill1').value.trim(),
-                    weaponSkill2: document.getElementById('weaponSkill2').value.trim(),
-                    weaponPassive: document.getElementById('weaponPassive').value.trim(),
-                    helmet: document.getElementById('helmet').value.trim(),
-                    helmetSkill: document.getElementById('helmetSkill').value.trim(),
-                    helmetPassive: document.getElementById('helmetPassive').value.trim(),
-                    chest: document.getElementById('chest').value.trim(),
-                    chestSkill: document.getElementById('chestSkill').value.trim(),
-                    chestPassive: document.getElementById('chestPassive').value.trim(),
-                    boots: document.getElementById('boots').value.trim(),
-                    bootsSkill: document.getElementById('bootsSkill').value.trim(),
-                    bootsPassive: document.getElementById('bootsPassive').value.trim(),
-                    cloak: document.getElementById('cloak').value,
-                    food: document.getElementById('food').value,
-                    potion: document.getElementById('potion').value,
-                    mount: document.getElementById('mount').value.trim(),
-                    ip: document.getElementById('ipLevel').value,
-                    image: imageBase64 // Добавляем картинку
-                };
-                
-                // Проверка
-                if (!formData.name) {
-                    showNotification("Введите название билда!", false);
-                    document.getElementById('buildName').focus();
-                    return;
-                }
-                if (!formData.category) {
-                    showNotification("Выберите категорию!", false);
-                    return;
-                }
-                if (!formData.weapon) {
-                    showNotification("Укажите оружие!", false);
-                    document.getElementById('weaponType').focus();
-                    return;
-                }
-                
-                // Показываем окно подтверждения
-                showConfirmModal(formData);
-            });
-            
-            // ============ СОЗДАНИЕ БИЛДА ============
-            function createBuildFromData() {
-                if (!currentFormData) return;
-                
-                const items = [];
-                if (currentFormData.weapon) {
-                    items.push(`🗡️ Оружие: ${currentFormData.weapon}`);
-                    if (currentFormData.weaponSkill1) items.push(`  • Q: ${currentFormData.weaponSkill1}`);
-                    if (currentFormData.weaponSkill2) items.push(`  • W: ${currentFormData.weaponSkill2}`);
-                    if (currentFormData.weaponPassive) items.push(`  • Пассивка: ${currentFormData.weaponPassive}`);
-                }
-                if (currentFormData.helmet) {
-                    items.push(`⛑️ Шлем: ${currentFormData.helmet}`);
-                    if (currentFormData.helmetSkill) items.push(`  • F: ${currentFormData.helmetSkill}`);
-                    if (currentFormData.helmetPassive) items.push(`  • Пассивка: ${currentFormData.helmetPassive}`);
-                }
-                if (currentFormData.chest) {
-                    items.push(`🦺 Нагрудник: ${currentFormData.chest}`);
-                    if (currentFormData.chestSkill) items.push(`  • E: ${currentFormData.chestSkill}`);
-                    if (currentFormData.chestPassive) items.push(`  • Пассивка: ${currentFormData.chestPassive}`);
-                }
-                if (currentFormData.boots) {
-                    items.push(`👢 Обувь: ${currentFormData.boots}`);
-                    if (currentFormData.bootsSkill) items.push(`  • R: ${currentFormData.bootsSkill}`);
-                    if (currentFormData.bootsPassive) items.push(`  • Пассивка: ${currentFormData.bootsPassive}`);
-                }
-                if (currentFormData.cloak) items.push(`🧥 Плащ: ${currentFormData.cloak}`);
-                if (currentFormData.food) items.push(`🍗 Еда: ${currentFormData.food}`);
-                if (currentFormData.potion) items.push(`🧪 Зелье: ${currentFormData.potion}`);
-                if (currentFormData.mount) items.push(`🐴 Транспорт: ${currentFormData.mount}`);
-                if (currentFormData.ip) items.push(`📊 IP: ${currentFormData.ip}`);
-                
-                if (typeof createBuild !== 'function') {
-                    showNotification("❌ Ошибка: функция createBuild не найдена!", false);
-                    return;
-                }
-                
-                try {
-                    // Создаем билд с картинкой
-                    createBuild(
-                        currentFormData.name,
-                        currentFormData.description,
-                        items,
-                        currentFormData.category,
-                        currentFormData.image || '', // Передаем картинку
-                        ''
-                    );
-                    
-                    const savedBuilds = JSON.parse(localStorage.getItem('builds') || '[]');
-                    showNotification(`✅ Билд "${currentFormData.name}" создан! Всего: ${savedBuilds.length}`);
-                    
-                    // Очищаем форму и картинку
-                    document.getElementById('buildForm').reset();
-                    imageBase64 = '';
-                    previewImage.src = '';
-                    imagePreview.style.display = 'none';
-                    
-                    // Предлагаем перейти на главную
-                    setTimeout(() => {
-                        if (confirm("Билд создан! Перейти на главную?")) {
-                            window.location.href = "index.html";
-                        }
-                    }, 2000);
-                    
-                } catch (error) {
-                    showNotification(`❌ Ошибка: ${error.message}`, false);
-                }
-                
-                currentFormData = null;
-            }
-            
-            // ============ УВЕДОМЛЕНИЯ ============
-            window.showNotification = function(message, isSuccess = true) {
-                const notification = document.getElementById('notification');
-                if (!notification) return;
-                
-                notification.textContent = message;
-                notification.className = isSuccess ? 'notification' : 'notification error';
-                notification.style.display = 'block';
-                
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 5000);
-            };
-        });
-    </script>
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>GuildBuild</span>
+                </div>
+                <p>Библиотека билдов Albion Online © <span class="current-year">2024</span></p>
+                <p class="footer-note">Для публикации билда в общий раздел требуется пароль</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/form-validation.js"></script>
 </body>
 </html>
