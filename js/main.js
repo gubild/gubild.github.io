@@ -136,7 +136,7 @@ function createBuildCard(build, showActions = true) {
     
     return card;
 }
-
+// Вспомогательные функции
 function getMyBuilds() {
     // Проверяем есть ли CONFIG
     const storageKey = window.CONFIG ? 
@@ -145,10 +145,18 @@ function getMyBuilds() {
     
     const buildsJson = localStorage.getItem(storageKey);
     return buildsJson ? JSON.parse(buildsJson) : [];
-} // ← ЭТА СКОБКА ЗАКРЫВАЕТ ФУНКЦИЮ!
+// ← ЗДЕСЬ ДОЛЖНА БЫТЬ ЗАКРЫВАЮЩАЯ СКОБКА } НО ЕЁ НЕТ!
+
+function getPublicBuilds() {
+    // Проверяем есть ли CONFIG
+    const storageKey = window.CONFIG ? 
+        window.CONFIG.STORAGE_KEYS.PUBLIC_BUILDS : 
+        'guildbuild_public_builds';
     
     const buildsJson = localStorage.getItem(storageKey);
     return buildsJson ? JSON.parse(buildsJson) : [];
+}
+
 }
 }
 
