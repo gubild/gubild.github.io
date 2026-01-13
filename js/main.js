@@ -137,12 +137,15 @@ function createBuildCard(build, showActions = true) {
     return card;
 }
 
-// Вспомогательные функции
 function getMyBuilds() {
     // Проверяем есть ли CONFIG
     const storageKey = window.CONFIG ? 
         window.CONFIG.STORAGE_KEYS.MY_BUILDS : 
         'guildbuild_my_builds';
+    
+    const buildsJson = localStorage.getItem(storageKey);
+    return buildsJson ? JSON.parse(buildsJson) : [];
+} // ← ЭТА СКОБКА ЗАКРЫВАЕТ ФУНКЦИЮ!
     
     const buildsJson = localStorage.getItem(storageKey);
     return buildsJson ? JSON.parse(buildsJson) : [];
