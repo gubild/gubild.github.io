@@ -102,8 +102,14 @@ function createBuildCard(build, showActions = true) {
 
 // Вспомогательные функции
 function getMyBuilds() {
-    const buildsJson = localStorage.getItem(CONFIG.STORAGE_KEYS.MY_BUILDS);
+    // Проверяем есть ли CONFIG
+    const storageKey = window.CONFIG ? 
+        window.CONFIG.STORAGE_KEYS.MY_BUILDS : 
+        'guildbuild_my_builds';
+    
+    const buildsJson = localStorage.getItem(storageKey);
     return buildsJson ? JSON.parse(buildsJson) : [];
+}
 }
 
 function getPublicBuilds() {
