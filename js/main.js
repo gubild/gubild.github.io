@@ -298,3 +298,36 @@ function deleteBuild(buildId, buttonElement) {
         }
     }
 }
+// Удаление общего билда (только для админа)
+function deletePublicBuild(buildId, adminPassword) {
+    if (!adminPassword || adminPassword !== CONFIG.ADMIN_PASSWORD) {
+        alert('❌ Требуется пароль админа для удаления общих билдов!');
+        return false;
+    }
+    
+    if (!confirm('⚠️ ВНИМАНИЕ: Вы удаляете билд из ОБЩЕЙ базы. Это увидят все пользователи. Продолжить?')) {
+        return false;
+    }
+    
+    try {
+        // Удаляем из localStorage
+        const publicBuilds = getPublicBuilds();
+        const updatedBuilds = publicBuilds.filter(build => build.id !== buildId);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.PUBLIC_BUILDS, JSON.stringify(updatedBuilds));
+        
+        // Если есть Supabase — удаляем и оттуда
+        if (typeof supabaseAPI !== 'undefined') {
+            supabaseAPI.deleteBuild(buildId).then(result => {
+                console.log('Удалено из Supabase:', result);
+            });
+        }
+        
+        alert('✅ Общий билд удалён!');
+        return true;
+        
+    } catch (error) {
+        console.error('Ошибка удаления общего билда:', error);
+        alert('❌ Ошибка при удалении общего билда');
+        return false;
+    }
+}
